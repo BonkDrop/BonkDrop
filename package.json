@@ -1,0 +1,25 @@
+{
+  "name": "bonkdrop",
+  "version": "1.0.0",
+  "description": "Un site web qui permet d'envoyer des images, des documents, des vidéos et tous autres types de fichiers qui sont déjà inclus dans la discussion sans devoir cliquer sur un lien. Fonctionne avec les e-mails, Discord, WhatsApp et tous autres types de messageries instantanées. Aucune inscription n'est requise et c'est 100 % gratuit :)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheVaro93/BonkDrop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TheVaro93/BonkDrop/issues"
+  },
+  "homepage": "https://github.com/TheVaro93/BonkDrop#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
