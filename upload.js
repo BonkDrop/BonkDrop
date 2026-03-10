@@ -1,3 +1,8 @@
+const supabase = supabase.createClient(
+"https://nyvwcggocbplisszqaju.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os"
+)
+
 const images = [
 
 "https://www.mmv.fr/images/cms/paysage-montagne-ete/paysage-montagne-mont-blanc.jpg?frz-v=647",
