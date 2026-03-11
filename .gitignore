@@ -1,0 +1,31 @@
+# Identifiants et clés secrètes
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Fichiers Supabase
+supabase-keys.js
+config.js
+secrets.js
+
+# Node modules
+node_modules/
+package-lock.json
+yarn.lock
+
+# IDE et logs
+.vscode/
+.idea/
+*.log
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/

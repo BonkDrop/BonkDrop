@@ -2,29 +2,43 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="upload.js"></script>
 <link rel="stylesheet" href="style.css">
-<title>BonkDrop </title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<title>BonkDrop - Partage rapide</title>
 </head>
 
 <body>
 
 <div class="overlay">
+    <div class="content">
+        <div class="header">
+            <h1 class="title">BonkDrop 🔨</h1>
+            <p class="subtitle">Déposez votre fichier, obtenez un lien et collez en toute beauté !</p>
+        </div>
 
-    <h1>BonkDrop 🔨</h1>
-    <p>Déposez votre fichier, obtenez un lien et collez en toute beauté !</p>
+        <div class="upload-box">
+            <div id="drop-zone" class="drop-zone fade-in">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p class="drop-text">Glisse ton fichier ici</p>
+                <p class="drop-hint">ou clique pour parcourir</p>
+                <input type="file" id="file-input" hidden>
+            </div>
+            
+            <div class="button-group">
+                <button id="uploadBtn" class="btn btn-primary">Obtenir le lien</button>
+                <button id="upload" class="btn btn-secondary">Uploader</button>
+            </div>
+        </div>
 
-    <div class="upload-box">
-        <div id="drop-zone">
-    <p>Glisse ton fichier ici</p>
-    <input type="file" id="file-input">
+        <div id="result" class="result"></div>
     </div>
-    <button id="upload">Uploader</button>
-        <button id="uploadBtn">Obtenir le lien</button>
-    </div>
-
-    <div id="result"></div>
 
 </div>
 
