@@ -5,66 +5,65 @@
 }
 
 :root {
-    --bg: #f3f4f6;
-    --bg-accent: #e8ecef;
+    --bg: #f7f7f7;
     --card: #ffffff;
-    --text: #0f172a;
-    --muted: #475569;
-    --line: #dbe2ea;
-    --primary: #1f2937;
-    --primary-hover: #111827;
-    --success-bg: #ecfdf3;
-    --success-text: #166534;
-    --success-line: #bbf7d0;
-    --error-bg: #fef2f2;
-    --error-text: #991b1b;
-    --error-line: #fecaca;
+    --text: #222;
+    --muted: #555;
+    --line: #d1d1d1;
+    --primary: #2e6da4;
+    --primary-hover: #245580;
+    --success-bg: #e7f8ea;
+    --success-text: #1d6b2d;
+    --success-line: #bceac5;
+    --error-bg: #fdecec;
+    --error-text: #8f2121;
+    --error-line: #f4c1c1;
 }
 
 body {
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     min-height: 100vh;
     color: var(--text);
-    background:
-        radial-gradient(circle at 10% 15%, #ffffff 0%, transparent 35%),
-        radial-gradient(circle at 90% 90%, #e2e8f0 0%, transparent 25%),
-        linear-gradient(180deg, var(--bg-accent) 0%, var(--bg) 100%);
+    background: var(--bg);
 }
 
 .overlay {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 24px;
+    align-items: flex-start;
+    padding: 28px 14px;
 }
 
 .content {
-    width: min(680px, 100%);
+    width: min(700px, 100%);
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 15px 50px rgba(15, 23, 42, 0.08);
-    animation: cardIn 0.4s ease-out;
+    border-radius: 8px;
+    padding: 20px;
 }
 
 .header {
-    margin-bottom: 22px;
+    margin-bottom: 16px;
     text-align: left;
 }
 
 .title {
-    font-size: clamp(1.8rem, 5vw, 2.35rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    margin-bottom: 6px;
+    font-size: clamp(1.7rem, 5vw, 2.1rem);
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
 .subtitle {
-    font-size: 1rem;
+    font-size: 0.98rem;
     color: var(--muted);
-    line-height: 1.45;
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+
+.small-note {
+    font-size: 0.82rem;
+    color: #666;
 }
 
 .upload-box {
@@ -72,51 +71,50 @@ body {
 }
 
 .drop-zone {
-    border: 2px dashed #c8d1dc;
-    border-radius: 16px;
-    padding: 30px 24px;
+    border: 2px dashed #b8b8b8;
+    border-radius: 8px;
+    padding: 20px 14px;
     cursor: pointer;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-    background: #f8fafc;
+    transition: border-color 0.15s ease;
+    background: #fafafa;
     margin-bottom: 16px;
     display: block;
     text-align: center;
 }
 
 .drop-zone:hover {
-    border-color: #94a3b8;
-    background: #f1f5f9;
+    border-color: #8f8f8f;
 }
 
 .drop-zone.hover {
-    background: #eef2f7;
-    border-color: #64748b;
+    background: #f1f1f1;
+    border-color: #6d6d6d;
 }
 
 .upload-icon {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     margin-bottom: 10px;
-    color: #334155;
+    color: #444;
 }
 
 .drop-text {
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text);
 }
 
 .drop-hint {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: var(--muted);
     margin-top: 6px;
 }
 
 .selected-file {
     margin-top: 10px;
-    font-size: 0.9rem;
-    color: #1e293b;
-    font-weight: 500;
+    font-size: 0.86rem;
+    color: #333;
+    font-weight: 400;
     word-break: break-word;
 }
 
@@ -126,14 +124,14 @@ body {
 }
 
 .btn {
-    padding: 11px 18px;
-    font-size: 0.98rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 1px solid #1f4f77;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease, opacity 0.2s ease;
-    font-family: 'Manrope', sans-serif;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.06s ease;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .btn-primary {
@@ -143,6 +141,10 @@ body {
 
 .btn-primary:hover {
     background: var(--primary-hover);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
 }
 
 .btn:disabled {
@@ -157,17 +159,17 @@ body {
 }
 
 .result-card {
-    border-radius: 12px;
+    border-radius: 6px;
     border: 1px solid var(--line);
-    background: #f8fafc;
+    background: #fafafa;
     padding: 12px;
 }
 
 .result-title {
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.88rem;
+    font-weight: 600;
     margin-bottom: 8px;
-    color: #0f172a;
+    color: #222;
 }
 
 .result-link-row {
@@ -182,34 +184,34 @@ body {
     min-width: 220px;
     width: 100%;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 4px;
     background: #fff;
-    padding: 9px 11px;
-    font-size: 0.9rem;
-    color: #0f172a;
+    padding: 8px 10px;
+    font-size: 0.88rem;
+    color: #222;
 }
 
 .btn-copy {
-    border: 1px solid #cbd5e1;
+    border: 1px solid #b7b7b7;
     background: #fff;
-    color: #0f172a;
-    border-radius: 8px;
-    padding: 9px 12px;
-    font-size: 0.9rem;
-    font-weight: 700;
+    color: #222;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 0.86rem;
+    font-weight: 600;
     cursor: pointer;
 }
 
 .btn-copy:hover {
-    background: #f8fafc;
+    background: #f2f2f2;
 }
 
 .status {
-    border-radius: 10px;
+    border-radius: 6px;
     border: 1px solid var(--line);
     padding: 10px 12px;
-    font-size: 0.93rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 400;
 }
 
 .status.success {
@@ -225,37 +227,30 @@ body {
 }
 
 .status.info {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-    color: #1e3a8a;
-}
-
-@keyframes cardIn {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    background: #edf4ff;
+    border-color: #bcd6ff;
+    color: #234b8a;
 }
 
 @media (max-width: 600px) {
     .overlay {
-        padding: 12px;
+        padding: 10px;
     }
 
     .content {
-        padding: 18px;
-        border-radius: 16px;
+        padding: 14px;
+        border-radius: 6px;
     }
 
     .drop-zone {
-        padding: 22px 14px;
+        padding: 16px 10px;
     }
 
     .button-group {
         display: block;
+    }
+
+    .btn {
+        width: 100%;
     }
 }
