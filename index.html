@@ -4,41 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="upload.js"></script>
+<script src="upload.js" defer></script>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
 <title>BonkDrop - Partage rapide</title>
 </head>
 
 <body>
 
 <div class="overlay">
-    <div class="content">
+    <main class="content">
         <div class="header">
-            <h1 class="title">BonkDrop 🔨</h1>
-            <p class="subtitle">Déposez votre fichier, obtenez un lien et collez en toute beauté !</p>
+            <h1 class="title">BonkDrop</h1>
+            <p class="subtitle">Partage de fichiers simple, rapide et sans friction.</p>
         </div>
 
         <div class="upload-box">
-            <div id="drop-zone" class="drop-zone fade-in">
+            <label for="file-input" id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
                 <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
-                <p class="drop-text">Glisse ton fichier ici</p>
-                <p class="drop-hint">ou clique pour parcourir</p>
+                <p class="drop-text">Glissez un fichier ici</p>
+                <p class="drop-hint">ou cliquez pour selectionner</p>
+                <p id="selected-file" class="selected-file">Aucun fichier selectionne</p>
                 <input type="file" id="file-input" hidden>
-            </div>
+            </label>
             
             <div class="button-group">
-                <button id="uploadBtn" class="btn btn-primary">Obtenir le lien</button>
-                <button id="upload" class="btn btn-secondary">Uploader</button>
+                <button id="uploadBtn" class="btn btn-primary" type="button">Uploader et obtenir le lien</button>
             </div>
         </div>
 
-        <div id="result" class="result"></div>
-    </div>
+        <section id="result" class="result" aria-live="polite"></section>
+    </main>
 
 </div>
 
