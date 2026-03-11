@@ -18,35 +18,43 @@
 </div>
 
 <div class="overlay">
-    <main class="content">
-        <div class="header">
-            <h1 class="title">BonkDrop 🔨</h1>
-            <p class="subtitle">LE site de partage rapide de fichiers compatible avec Discord, 
-                les mails et autres messageries instantanées !</p>
-            <p class="small-note">Gratuit, sans limitez et vos fichier restent jusqu'à 
-                ce que vous les suprimiez :)</p>
-        </div>
-
-        <div class="upload-box">
-            <label for="file-input" id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                <p class="drop-text">Glissez un fichier ici</p>
-                <p class="drop-hint">ou cliquez pour selectionner</p>
-                <p id="selected-file" class="selected-file">Aucun fichier selectionne</p>
-                <input type="file" id="file-input" hidden>
-            </label>
-            
-            <div class="button-group">
-                <button id="uploadBtn" class="btn btn-primary" type="button">Uploader et obtenir le lien</button>
+    <div class="page-shell">
+        <main class="content">
+            <div class="header">
+                <h1 class="title">BonkDrop 🔨</h1>
+                <p class="subtitle">LE site de partage rapide de fichiers compatible avec Discord, 
+                    les mails et autres messageries instantanées !</p>
+                <p class="small-note">Gratuit, sans limitez et vos fichier restent jusqu'à 
+                    ce que vous les suprimiez :)</p>
             </div>
-        </div>
 
-        <section id="result" class="result" aria-live="polite"></section>
-    </main>
+            <div class="upload-box">
+                <label for="file-input" id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p class="drop-text">Glissez un fichier ici</p>
+                    <p class="drop-hint">ou cliquez pour selectionner</p>
+                    <p id="selected-file" class="selected-file">Aucun fichier selectionne</p>
+                    <input type="file" id="file-input" hidden>
+                </label>
+                
+                <div class="button-group">
+                    <button id="uploadBtn" class="btn btn-primary" type="button">Uploader et obtenir le lien</button>
+                </div>
+            </div>
+
+            <section id="result" class="result" aria-live="polite"></section>
+        </main>
+
+        <footer class="content site-footer">
+            <p>Version du site : <strong>v 1.13</strong></p>
+            <p>Service cree par <strong>TheVaro93</strong> :p</p>
+            <p><a href="cgu.html">Conditions generales d'utilisation et mentions legales</a></p>
+        </footer>
+    </div>
 
 </div>
 
