@@ -5,26 +5,26 @@
 }
 
 :root {
-    --bg: #f7f7f7;
-    --card: #ffffff;
-    --text: #222;
-    --muted: #555;
-    --line: #d1d1d1;
-    --primary: #2e6da4;
-    --primary-hover: #245580;
-    --success-bg: #e7f8ea;
-    --success-text: #1d6b2d;
-    --success-line: #bceac5;
-    --error-bg: #fdecec;
-    --error-text: #8f2121;
-    --error-line: #f4c1c1;
+    --bg: #101014;
+    --card: #1a1a21;
+    --text: #e8e8ee;
+    --muted: #b2b2c2;
+    --line: #373748;
+    --primary: #3f7eb8;
+    --primary-hover: #32628f;
+    --success-bg: #1a3523;
+    --success-text: #9de3b0;
+    --success-line: #2f5b3d;
+    --error-bg: #3a1d24;
+    --error-text: #ffb2c2;
+    --error-line: #6f3340;
 }
 
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     min-height: 100vh;
     color: var(--text);
-    background: var(--bg);
+    background: #101014;
 }
 
 .overlay {
@@ -38,8 +38,8 @@ body {
 .content {
     width: min(700px, 100%);
     background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    border: 2px solid var(--line);
+    border-radius: 4px;
     padding: 20px;
 }
 
@@ -52,6 +52,7 @@ body {
     font-size: clamp(1.7rem, 5vw, 2.1rem);
     font-weight: 700;
     margin-bottom: 8px;
+    letter-spacing: 0.3px;
 }
 
 .subtitle {
@@ -63,7 +64,7 @@ body {
 
 .small-note {
     font-size: 0.82rem;
-    color: #666;
+    color: #8e8ea3;
 }
 
 .upload-box {
@@ -71,31 +72,31 @@ body {
 }
 
 .drop-zone {
-    border: 2px dashed #b8b8b8;
-    border-radius: 8px;
+    border: 2px dashed #6c6c80;
+    border-radius: 4px;
     padding: 20px 14px;
     cursor: pointer;
     transition: border-color 0.15s ease;
-    background: #fafafa;
+    background: #14141b;
     margin-bottom: 16px;
     display: block;
     text-align: center;
 }
 
 .drop-zone:hover {
-    border-color: #8f8f8f;
+    border-color: #9494ac;
 }
 
 .drop-zone.hover {
-    background: #f1f1f1;
-    border-color: #6d6d6d;
+    background: #1c1c27;
+    border-color: #a6a6c2;
 }
 
 .upload-icon {
     width: 32px;
     height: 32px;
     margin-bottom: 10px;
-    color: #444;
+    color: #c7c7db;
 }
 
 .drop-text {
@@ -113,7 +114,7 @@ body {
 .selected-file {
     margin-top: 10px;
     font-size: 0.86rem;
-    color: #333;
+    color: #ccccda;
     font-weight: 400;
     word-break: break-word;
 }
@@ -127,8 +128,8 @@ body {
     padding: 10px 14px;
     font-size: 0.95rem;
     font-weight: 600;
-    border: 1px solid #1f4f77;
-    border-radius: 6px;
+    border: 1px solid #2a5074;
+    border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.06s ease;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -159,9 +160,9 @@ body {
 }
 
 .result-card {
-    border-radius: 6px;
+    border-radius: 4px;
     border: 1px solid var(--line);
-    background: #fafafa;
+    background: #14141b;
     padding: 12px;
 }
 
@@ -169,7 +170,7 @@ body {
     font-size: 0.88rem;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #222;
+    color: #dddded;
 }
 
 .result-link-row {
@@ -184,18 +185,18 @@ body {
     min-width: 220px;
     width: 100%;
     border: 1px solid var(--line);
-    border-radius: 4px;
-    background: #fff;
+    border-radius: 3px;
+    background: #0f0f15;
     padding: 8px 10px;
     font-size: 0.88rem;
-    color: #222;
+    color: #f0f0fb;
 }
 
 .btn-copy {
-    border: 1px solid #b7b7b7;
-    background: #fff;
-    color: #222;
-    border-radius: 4px;
+    border: 1px solid #666681;
+    background: #222231;
+    color: #ececf8;
+    border-radius: 3px;
     padding: 8px 10px;
     font-size: 0.86rem;
     font-weight: 600;
@@ -203,7 +204,7 @@ body {
 }
 
 .btn-copy:hover {
-    background: #f2f2f2;
+    background: #2c2c3e;
 }
 
 .status {
@@ -227,9 +228,9 @@ body {
 }
 
 .status.info {
-    background: #edf4ff;
-    border-color: #bcd6ff;
-    color: #234b8a;
+    background: #182334;
+    border-color: #2b4467;
+    color: #b7d2ff;
 }
 
 @media (max-width: 600px) {
