@@ -344,6 +344,22 @@ body {
     text-decoration: underline;
 }
 
+.legal-contact-link {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(232, 232, 238, 0.4);
+}
+
+.legal-contact-link:hover {
+    color: #ffffff;
+    border-bottom-color: rgba(255, 255, 255, 0.85);
+}
+
+.legal-contact-link:visited {
+    color: var(--text);
+}
+
 .legal-toc {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
