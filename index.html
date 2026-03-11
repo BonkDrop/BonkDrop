@@ -4,19 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="background-rotator.js" defer></script>
 <script src="upload.js" defer></script>
 <link rel="stylesheet" href="style.css">
-<title>BonkDrop - Partage rapide</title>
+<title>BonkDrop 🔨</title>
 </head>
 
-<body>
+<body class="site-page">
+
+<div class="site-background" aria-hidden="true">
+    <div class="site-background-layer is-visible"></div>
+    <div class="site-background-layer"></div>
+</div>
 
 <div class="overlay">
     <main class="content">
         <div class="header">
-            <h1 class="title">BonkDrop</h1>
-            <p class="subtitle">Petit projet perso pour partager un fichier vite.</p>
-            <p class="small-note">Fait maison avec un niveau debutant intermediaire.</p>
+            <h1 class="title">BonkDrop 🔨</h1>
+            <p class="subtitle">LE site de partage rapide de fichiers compatible avec Discord, 
+                les mails et autres messageries instantanées !</p>
+            <p class="small-note">Gratuit, sans limitez et vos fichier restent jusqu'à 
+                ce que vous les suprimiez :)</p>
         </div>
 
         <div class="upload-box">

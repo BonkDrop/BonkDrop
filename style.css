@@ -27,6 +27,34 @@ body {
     background: #101014;
 }
 
+.site-page {
+    position: relative;
+    background: #05080c;
+}
+
+.site-background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    background: #05080c;
+}
+
+.site-background-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: scale(1.03);
+}
+
+.site-background-layer.is-visible {
+    opacity: 1;
+}
+
 .overlay {
     min-height: 100vh;
     display: flex;
@@ -233,6 +261,107 @@ body {
     color: #b7d2ff;
 }
 
+.legal-overlay {
+    position: relative;
+    z-index: 1;
+    align-items: stretch;
+    padding-top: 24px;
+    padding-bottom: 40px;
+}
+
+.legal-content {
+    width: min(900px, 100%);
+    background: rgba(26, 26, 33, 0.86);
+    backdrop-filter: blur(8px);
+}
+
+.legal-header {
+    margin-bottom: 22px;
+}
+
+.legal-kicker {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 9px;
+    border: 1px solid #44637d;
+    border-radius: 999px;
+    background: #13202d;
+    color: #bfdcff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.legal-back-link {
+    margin-top: 12px;
+}
+
+.legal-back-link a,
+.legal-toc a {
+    color: #9bc9ff;
+    text-decoration: none;
+}
+
+.legal-back-link a:hover,
+.legal-toc a:hover {
+    color: #c4e0ff;
+    text-decoration: underline;
+}
+
+.legal-toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 22px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #14141b;
+}
+
+.legal-toc a {
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+.legal-section {
+    padding: 18px 0;
+    border-top: 1px solid #2a2a38;
+}
+
+.legal-section:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.legal-section h2 {
+    margin-bottom: 12px;
+    font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+    line-height: 1.35;
+}
+
+.legal-section p {
+    color: var(--text);
+    font-size: 0.96rem;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.legal-list {
+    margin: 0 0 14px 20px;
+    color: var(--text);
+}
+
+.legal-list li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.legal-list-danger li::marker {
+    color: #ff8ea2;
+}
+
 @media (max-width: 600px) {
     .overlay {
         padding: 10px;
@@ -253,5 +382,18 @@ body {
 
     .btn {
         width: 100%;
+    }
+
+    .legal-toc {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    .legal-section {
+        padding: 16px 0;
+    }
+
+    .legal-content {
+        backdrop-filter: blur(6px);
     }
 }
