@@ -1,9 +1,4 @@
-const SUPABASE_CONFIG = {
-    url: "https://nyvwcggocbplisszqaju.supabase.co",
-    key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os"
-};
-
-const STORAGE_BUCKET = "bonkdrop";
+const SUPABASE_FUNCTION_URL = "https://nyvwcggocbplisszqaju.supabase.co/functions/v1/upload";
 
 const dropZone = document.getElementById("drop-zone");
 const fileInput = document.getElementById("file-input");
@@ -11,18 +6,7 @@ const uploadBtn = document.getElementById("uploadBtn");
 const result = document.getElementById("result");
 const selectedFileText = document.getElementById("selected-file");
 
-const { createClient } = window.supabase;
-const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
-
 let selectedFile = null;
-
-function generateID() {
-    return Math.random().toString(36).slice(2, 10);
-}
-
-function sanitizeFileName(name) {
-    return name.toLowerCase().replace(/[^a-z0-9._-]/g, "-");
-}
 
 function renderStatus(type, message) {
     result.innerHTML = `<div class="status ${type}">${message}</div>`;
@@ -40,24 +24,27 @@ function renderResult(url) {
     `;
 
     const copyBtn = document.getElementById("copyLinkBtn");
+
     copyBtn.addEventListener("click", async () => {
         try {
             await navigator.clipboard.writeText(url);
             renderStatus("success", "Lien copie dans le presse-papiers.");
         } catch {
-            renderStatus("error", "Impossible de copier automatiquement. Copiez le lien manuellement.");
+            renderStatus("error", "Impossible de copier automatiquement.");
         }
     });
 }
 
 function setSelectedFile(file) {
     selectedFile = file;
+
     selectedFileText.textContent = file
         ? `${file.name} (${Math.ceil(file.size / 1024)} KB)`
         : "Aucun fichier selectionne";
 }
 
 async function uploadSelectedFile() {
+
     if (!selectedFile) {
         renderStatus("error", "Selectionnez d'abord un fichier.");
         return;
@@ -65,38 +52,44 @@ async function uploadSelectedFile() {
 
     uploadBtn.disabled = true;
     uploadBtn.textContent = "Upload en cours...";
+
     renderStatus("info", "Upload en cours, veuillez patienter...");
 
-    const filePath = `${Date.now()}-${generateID()}-${sanitizeFileName(selectedFile.name)}`;
-
     try {
-        const { error: uploadError } = await supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .upload(filePath, selectedFile, {
-                upsert: false,
-                contentType: selectedFile.type || "application/octet-stream"
-            });
 
-        if (uploadError) {
-            throw uploadError;
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const res = await fetch(SUPABASE_FUNCTION_URL, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            throw new Error("Erreur serveur");
         }
 
-        const { data } = supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .getPublicUrl(filePath);
+        const data = await res.json();
 
-        if (!data?.publicUrl) {
-            throw new Error("Impossible de generer le lien public.");
+        if (!data.url) {
+            throw new Error("Lien non reçu");
         }
 
-        renderResult(data.publicUrl);
+        renderResult(data.url);
+
     } catch (error) {
+
         const details = error?.message ? ` (${error.message})` : "";
+
         renderStatus("error", `Echec de l'upload${details}`);
+
     } finally {
+
         uploadBtn.disabled = false;
         uploadBtn.textContent = "Uploader et obtenir le lien";
+
     }
+
 }
 
 dropZone.addEventListener("dragover", (event) => {
@@ -109,12 +102,15 @@ dropZone.addEventListener("dragleave", () => {
 });
 
 dropZone.addEventListener("drop", (event) => {
+
     event.preventDefault();
+
     dropZone.classList.remove("hover");
 
     if (event.dataTransfer.files?.length > 0) {
         setSelectedFile(event.dataTransfer.files[0]);
     }
+
 });
 
 fileInput.addEventListener("change", () => {
