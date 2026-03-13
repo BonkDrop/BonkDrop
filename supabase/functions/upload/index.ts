@@ -17,7 +17,7 @@ serve(async (req: Request) => {
   const uploadForm = new FormData()
   uploadForm.append("file", file)
 
-  const response = await fetch("https://api.zerostorage.net/upload", {
+  const response = await fetch("https://upload.zerostorage.net/api/upload/universal", {
     method: "POST",
     body: uploadForm
   })
