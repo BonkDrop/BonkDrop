@@ -2,102 +2,61 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  "https://nyvwcggocbplisszqaju.supabase.co",
+  Deno.env.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzE0MDAzMywiZXhwIjoyMDg4NzE2MDMzfQ.3qqwhD6gUnCv_BHzioJ_r1jg1vt9s1JXjjClNWJXek4")!
 )
-
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Authorization, apikey, Content-Type",
-}
-
-function jsonResponse(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "Content-Type": "application/json", ...CORS_HEADERS },
-  })
-}
 
 serve(async (req: Request) => {
 
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS_HEADERS })
-  }
-
   if (req.method !== "POST") {
-    return jsonResponse({ error: "Method not allowed" }, 405)
+    return new Response("Method not allowed", { status: 405 })
   }
 
-  let formData: FormData
-  try {
-    formData = await req.formData()
-  } catch {
-    return jsonResponse({ error: "Invalid form data" }, 400)
-  }
-
-  const file = formData.get("file") as File | null
+  const formData = await req.formData()
+  const file = formData.get("file") as File
 
   if (!file) {
-    return jsonResponse({ error: "No file uploaded" }, 400)
+    return new Response("No file uploaded", { status: 400 })
   }
 
   const uploadForm = new FormData()
   uploadForm.append("file", file, file.name)
 
-  // upload vers ZeroStorage avec timeout de 15s
-  let zeroResponse: Response
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 15_000)
-    zeroResponse = await fetch(
-      "https://upload.zerostorage.net/api/upload/universal",
-      {
-        method: "POST",
-        body: uploadForm,
-        signal: controller.signal,
-      }
-    )
-    clearTimeout(timer)
-  } catch (err) {
-    const isTimeout = err instanceof Error && err.name === "AbortError"
-    return jsonResponse(
-      { error: isTimeout ? "ZeroStorage timeout" : "ZeroStorage unreachable" },
-      504
-    )
+  const response = await fetch(
+    "https://upload.zerostorage.net/api/upload/universal",
+    {
+      method: "POST",
+      body: uploadForm
+    }
+  )
+
+  const data = await response.json()
+
+  console.log("ZeroStorage response:", data)
+
+  const fileUrl = data.url || data.file || data.link
+
+  if (!fileUrl) {
+    return new Response("Upload failed", { status: 500 })
   }
 
-  if (!zeroResponse.ok) {
-    return jsonResponse(
-      { error: `ZeroStorage error: ${zeroResponse.status}` },
-      502
-    )
-  }
-
-  let data: { file?: string }
-  try {
-    data = await zeroResponse.json()
-  } catch {
-    return jsonResponse({ error: "Invalid response from ZeroStorage" }, 502)
-  }
-
-  if (!data.file) {
-    return jsonResponse({ error: "ZeroStorage returned no file URL" }, 502)
-  }
-
-  // génération ID court
   const id = crypto.randomUUID().slice(0, 6)
 
-  // sauvegarde dans la DB
-  const { error: dbError } = await supabase
+  const { error } = await supabase
     .from("files")
-    .insert({ id, url: data.file })
+    .insert({
+      id: id,
+      url: fileUrl
+    })
 
-  if (dbError) {
-    return jsonResponse({ error: `Database error: ${dbError.message}` }, 500)
+  if (error) {
+    console.error("Supabase error:", error)
   }
 
-  // lien BonkDrop
-  return jsonResponse({ url: `https://bonkdrop.com/f/${id}` })
+  return new Response(JSON.stringify({
+    url: `https://bonkdrop.fr/f/${id}`
+  }), {
+    headers: { "Content-Type": "application/json" }
+  })
 
 })
