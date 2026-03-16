@@ -6,23 +6,7 @@ const uploadBtn = document.getElementById("uploadBtn");
 const result = document.getElementById("result");
 const selectedFileText = document.getElementById("selected-file");
 
-const formData = new FormData();
-formData.append("file", file);
-
-const response = await fetch(
-  "https://nyvwcggocbplisszqaju.supabase.co/functions/v1/upload",
-  {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os"
-    },
-    body: formData
-  }
-);
-
-const data = await response.json();
-console.log(data);
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os";
 
 let selectedFile = null;
 
@@ -80,6 +64,10 @@ async function uploadSelectedFile() {
 
         const res = await fetch(SUPABASE_FUNCTION_URL, {
             method: "POST",
+            headers: {
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                "apikey": SUPABASE_ANON_KEY
+            },
             body: formData
         });
 
