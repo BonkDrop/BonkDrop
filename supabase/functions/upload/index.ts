@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const supabase = createClient(
   "https://nyvwcggocbplisszqaju.supabase.co",
-  Deno.env.get("service_role_key")!
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 )
 
 serve(async (req: Request) => {
@@ -34,7 +34,11 @@ serve(async (req: Request) => {
 
   console.log("ZeroStorage response:", data)
 
-  const fileUrl = data.url || data.file || data.link
+  const fileUrl =
+  data?.files?.[0]?.url ||
+  data?.url ||
+  data?.file ||
+  data?.link
 
   if (!fileUrl) {
     return new Response("Upload failed", { status: 500 })
