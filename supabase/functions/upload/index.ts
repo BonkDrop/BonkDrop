@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const supabase = createClient(
   "https://nyvwcggocbplisszqaju.supabase.co",
-  Deno.env.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzE0MDAzMywiZXhwIjoyMDg4NzE2MDMzfQ.3qqwhD6gUnCv_BHzioJ_r1jg1vt9s1JXjjClNWJXek4")!
+  Deno.env.get("service_role_key")!
 )
 
 serve(async (req: Request) => {
