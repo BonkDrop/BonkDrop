@@ -30,31 +30,38 @@ serve(async (req: Request) => {
     }
   )
 
+  if (!response.ok) {
+    console.error("ZeroStorage HTTP error:", response.status)
+    return new Response("ZeroStorage upload failed", { status: 500 })
+  }
+
   const data = await response.json()
 
   console.log("ZeroStorage response:", data)
 
   const fileUrl =
-  data?.files?.[0]?.url ||
-  data?.url ||
-  data?.file ||
-  data?.link
+    data?.files?.[0]?.url ||
+    data?.files?.[0]?.link ||
+    data?.url ||
+    data?.file ||
+    data?.link
 
   if (!fileUrl) {
+    console.error("No file URL returned")
     return new Response("Upload failed", { status: 500 })
   }
 
   const id = crypto.randomUUID().slice(0, 6)
 
-  const { error } = await supabase
+  const { data: inserted, error } = await supabase
     .from("files")
-    .insert({
-      id: id,
-      url: fileUrl
-    })
+    .insert({ id, url: fileUrl })
+
+  console.log("Inserted:", inserted)
 
   if (error) {
     console.error("Supabase error:", error)
+    return new Response("Database insert failed", { status: 500 })
   }
 
   return new Response(JSON.stringify({
