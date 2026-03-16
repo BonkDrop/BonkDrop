@@ -66,7 +66,21 @@ async function uploadSelectedFile() {
         });
 
         if (!res.ok) {
-            throw new Error("Erreur serveur");
+            let errorMessage = `Erreur serveur (${res.status})`;
+
+            try {
+                const errorBody = await res.json();
+                if (errorBody?.message) {
+                    errorMessage = `${errorMessage}: ${errorBody.message}`;
+                }
+                if (errorBody?.details) {
+                    errorMessage = `${errorMessage} - ${errorBody.details}`;
+                }
+            } catch {
+                // Ignore JSON parse errors and keep fallback error message.
+            }
+
+            throw new Error(errorMessage);
         }
 
         const data = await res.json();
