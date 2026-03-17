@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirection...</title>
+</head>
+<body>
+  <script>
+    const path = window.location.pathname;
+
+    // Exemple: /BonkDrop.github.io/f/abc123
+    const parts = path.split("/f/");
+
+    if (parts.length > 1) {
+      const id = parts[1];
+
+      fetch("https://nyvwcggocbplisszqaju.supabase.co/rest/v1/files?id=eq." + id, {
+        headers: {
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.length > 0) {
+          window.location.href = data[0].url;
+        } else {
+          document.body.innerHTML = "<h1>404 - File not found</h1>";
+        }
+      });
+    } else {
+      document.body.innerHTML = "<h1>Invalid URL</h1>";
+    }
+  </script>
+</body>
+</html>
