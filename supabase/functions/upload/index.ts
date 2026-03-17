@@ -104,7 +104,7 @@ serve(async (req: Request) => {
     }
 
     return jsonResponse({
-      url: `https://thevaro93.me/BonkDrop.github.io/f/${id}`
+      url: `https://thevaro93.me/BonkDrop.github.io/download.html?id=${id}`
     })
   } catch (error) {
     console.error("Unhandled upload function error:", error)

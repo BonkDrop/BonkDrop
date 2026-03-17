@@ -1,0 +1,65 @@
+.simple-page .overlay {
+    align-items: center;
+}
+
+.simple-content {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 22px;
+    display: grid;
+    gap: 12px;
+}
+
+.simple-kicker {
+    display: inline-block;
+    justify-self: center;
+    padding: 5px 10px;
+    border: 1px solid #44637d;
+    border-radius: 999px;
+    background: #13202d;
+    color: #bfdcff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.simple-content .title {
+    margin-bottom: 0;
+}
+
+.simple-content .subtitle {
+    margin-bottom: 6px;
+}
+
+.status-line {
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: #182334;
+    color: #b7d2ff;
+    padding: 10px 12px;
+    font-size: 0.92rem;
+}
+
+.page-action {
+    display: inline-block;
+    justify-self: center;
+    text-decoration: none;
+    min-width: 220px;
+}
+
+.page-action[hidden] {
+    display: none;
+}
+
+.secondary-link {
+    color: #9bc9ff;
+    text-decoration: none;
+    font-size: 0.92rem;
+}
+
+.secondary-link:hover {
+    color: #c4e0ff;
+    text-decoration: underline;
+}
