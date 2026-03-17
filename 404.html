@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="background-rotator.js" defer></script>
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="404.css">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -42,8 +41,8 @@
 
       fetch("https://nyvwcggocbplisszqaju.supabase.co/rest/v1/files?id=eq." + id, {
         headers: {
-          "apikey": "TON_ANON_KEY",
-          "Authorization": "Bearer TON_ANON_KEY"
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os"
         }
       })
       .then(res => res.json())
