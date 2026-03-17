@@ -117,3 +117,43 @@ serve(async (req: Request) => {
   }
 
 })
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (id) {
+    fetch("https://nyvwcggocbplisszqaju.supabase.co/rest/v1/files?id=eq." + id, {
+      headers: {
+        "apikey": "TON_ANON_KEY",
+        "Authorization": "Bearer TON_ANON_KEY"
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.length > 0) {
+        const fileUrl = data[0].url;
+
+        document.getElementById("status").textContent = "File ready";
+
+        const btn = document.getElementById("downloadBtn");
+
+        // 👉 important
+        btn.href = fileUrl;
+        btn.setAttribute("download", ""); // force téléchargement
+        btn.target = "_blank"; // évite de quitter la page
+
+        btn.style.display = "block";
+
+      } else {
+        window.location.replace("/BonkDrop.github.io/liencasse.html");
+      }
+    })
+    .catch(() => {
+      window.location.replace("/BonkDrop.github.io/liencasse.html");
+    });
+
+  } else {
+    window.location.replace("/BonkDrop.github.io/liencasse.html");
+  }
+</script>

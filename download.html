@@ -6,8 +6,7 @@
   <script src="background-rotator.js" defer></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pages.css">
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/png">
   <title>BonkDrop - Telechargement</title>
 </head>
 <body class="site-page simple-page">
@@ -49,7 +48,7 @@
         document.getElementById("status").textContent = "Fichier pret";
 
         const btn = document.getElementById("downloadBtn");
-        btn.href = fileUrl;
+        btn.href = `https://nyvwcggocbplisszqaju.supabase.co/functions/v1/upload?id=${id}`;
         btn.setAttribute("download", "");
         btn.target = "_blank";
         btn.hidden = false;
