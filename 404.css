@@ -1,0 +1,42 @@
+.error-page .overlay {
+	align-items: center;
+}
+
+.error-content {
+	text-align: center;
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 28px 22px;
+}
+
+.error-kicker {
+	display: inline-block;
+	margin-bottom: 10px;
+	padding: 5px 10px;
+	border: 1px solid #44637d;
+	border-radius: 999px;
+	background: #13202d;
+	color: #bfdcff;
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.error-content .title {
+	margin-bottom: 10px;
+}
+
+.error-content .subtitle {
+	margin-bottom: 18px;
+}
+
+.download-btn {
+	display: inline-block;
+	min-width: 180px;
+	text-decoration: none;
+}
+
+.download-btn[hidden] {
+	display: none;
+}
