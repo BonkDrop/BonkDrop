@@ -29,6 +29,10 @@
     margin-bottom: 0;
 }
 
+.simple-content .brand-title-row {
+    justify-content: center;
+}
+
 .simple-content .subtitle {
     margin-bottom: 6px;
 }

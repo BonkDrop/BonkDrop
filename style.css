@@ -81,26 +81,31 @@ body {
     z-index: 1;
 }
 
-.card-with-logo {
-    padding-top: 78px;
+.brand-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
 }
 
-.brand-corner-logo {
-    position: absolute;
-    top: 16px;
-    left: 16px;
+.brand-inline-logo {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 52px;
     height: 52px;
+    flex-shrink: 0;
 }
 
-.brand-corner-logo img {
+.brand-inline-logo img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     display: block;
+}
+
+.brand-title-row .title {
+    margin-bottom: 0;
 }
 
 .header {
@@ -348,6 +353,10 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+}
+
+.brand-kicker-row .legal-kicker {
+    margin-bottom: 0;
 }
 
 .legal-back-link {
