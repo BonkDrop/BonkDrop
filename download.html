@@ -18,13 +18,16 @@
 
   <div class="overlay">
     <div class="page-shell">
-      <main class="content simple-content">
+      <main class="content simple-content card-with-logo">
+        <a class="brand-corner-logo" href="index.html" aria-label="Accueil BonkDrop">
+          <img src="logo_bonkdrop.png" alt="Logo BonkDrop">
+        </a>
         <p class="simple-kicker">Télechargement</p>
         <h1 class="title">BonkDrop 🔨</h1>
         <p class="subtitle">Récuperation de votre fichier en cours.</p>
         <p id="status" class="status-line">Chargement...</p>
         <a id="downloadBtn" class="btn btn-primary page-action" hidden>Télecharger</a>
-        <a class="secondary-link" href="/BonkDrop.github.io/">Retour à l'accueil</a>
+        <a class="secondary-link" href="/BonkDrop/">Retour à l'accueil</a>
       </main>
     </div>
   </div>
@@ -54,15 +57,15 @@
         btn.hidden = false;
 
       } else {
-        window.location.replace("/BonkDrop.github.io/liencasse.html");
+        window.location.replace("/BonkDrop/liencasse.html");
       }
     })
     .catch(() => {
-      window.location.replace("/BonkDrop.github.io/liencasse.html");
+      window.location.replace("/BonkDrop/liencasse.html");
     });
 
   } else {
-    window.location.replace("/BonkDrop.github.io/liencasse.html");
+    window.location.replace("/BonkDrop/liencasse.html");
   }
 </script>
 

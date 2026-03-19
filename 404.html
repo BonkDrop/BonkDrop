@@ -28,20 +28,20 @@
       .then(data => {
         if (data.length > 0) {
           // ✅ fichier existe
-          window.location.replace(`/BonkDrop.github.io/download.html?id=${id}`);
+          window.location.replace(`/BonkDrop/download.html?id=${id}`);
         } else {
           // ❌ fichier existe pas
-          window.location.replace("/BonkDrop.github.io/liencasse.html");
+          window.location.replace("/BonkDrop/liencasse.html");
         }
       })
       .catch(() => {
         // ❌ erreur API
-        window.location.replace("/BonkDrop.github.io/liencasse.html");
+        window.location.replace("/BonkDrop/liencasse.html");
       });
 
     } else {
       // ❌ pas un lien /f/
-      window.location.replace("/BonkDrop.github.io/liencasse.html");
+      window.location.replace("/BonkDrop/liencasse.html");
     }
   </script>
 

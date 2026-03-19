@@ -104,7 +104,7 @@ serve(async (req: Request) => {
     }
 
     return jsonResponse({
-      url: `https://thevaro93.me/BonkDrop.github.io/download.html?id=${id}`
+      url: `https://bonkdrop.github.io/BonkDrop/download.html?id=${id}`
     })
   } catch (error) {
     console.error("Unhandled upload function error:", error)
@@ -146,14 +146,14 @@ serve(async (req: Request) => {
         btn.style.display = "block";
 
       } else {
-        window.location.replace("/BonkDrop.github.io/liencasse.html");
+        window.location.replace("/BonkDrop/liencasse.html");
       }
     })
     .catch(() => {
-      window.location.replace("/BonkDrop.github.io/liencasse.html");
+      window.location.replace("/BonkDrop/liencasse.html");
     });
 
   } else {
-    window.location.replace("/BonkDrop.github.io/liencasse.html");
+    window.location.replace("/BonkDrop/liencasse.html");
   }
 </script>
