@@ -43,7 +43,8 @@ body {
     position: fixed;
     inset: 0;
     overflow: hidden;
-    z-index: -1;
+    z-index: 0;
+    pointer-events: none;
     background: linear-gradient(160deg, #0d1117 0%, #101419 52%, #111823 100%);
 }
 
