@@ -4,10 +4,10 @@
 .env.*.local
 .env.production
 
-# Fichiers Supabase
+# Fichiers 
 supabase-keys.js
 config.js
-secrets.js
+secrets.jsSupabase
 
 # Node modules
 node_modules/

@@ -5,31 +5,38 @@
 }
 
 :root {
-    --bg: #101014;
-    --card: #1a1a21;
-    --text: #e8e8ee;
-    --muted: #b2b2c2;
-    --line: #373748;
-    --primary: #3f7eb8;
-    --primary-hover: #32628f;
-    --success-bg: #1a3523;
-    --success-text: #9de3b0;
-    --success-line: #2f5b3d;
-    --error-bg: #3a1d24;
-    --error-text: #ffb2c2;
-    --error-line: #6f3340;
+    --bg: #101419;
+    --card: rgba(23, 29, 37, 0.9);
+    --card-strong: #171d25;
+    --text: #eef2f7;
+    --muted: #b4bfcc;
+    --line: #334254;
+    --line-soft: #2a3544;
+    --primary: #3f7298;
+    --primary-hover: #4c84ad;
+    --primary-soft: #203246;
+    --success-bg: #1c3328;
+    --success-text: #abd9bc;
+    --success-line: #39604a;
+    --error-bg: #3a1f26;
+    --error-text: #f2c0c9;
+    --error-line: #6e3a45;
 }
 
 body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
     min-height: 100vh;
     color: var(--text);
-    background: #101014;
+    background: var(--bg);
+    line-height: 1.45;
 }
 
 .site-page {
     position: relative;
-    background: #05080c;
+    background:
+        radial-gradient(900px 500px at 12% -10%, rgba(79, 123, 158, 0.22), transparent 60%),
+        radial-gradient(700px 400px at 90% 0%, rgba(52, 84, 115, 0.22), transparent 58%),
+        linear-gradient(160deg, #0d1117 0%, #101419 52%, #111823 100%);
 }
 
 .site-background {
@@ -37,7 +44,7 @@ body {
     inset: 0;
     overflow: hidden;
     z-index: -1;
-    background: #05080c;
+    background: linear-gradient(160deg, #0d1117 0%, #101419 52%, #111823 100%);
 }
 
 .site-background-layer {
@@ -62,38 +69,49 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 28px 14px;
+    padding: 34px 14px;
 }
 
 .page-shell {
-    width: min(700px, 100%);
+    width: min(860px, 100%);
     display: grid;
-    gap: 14px;
+    gap: 16px;
 }
 
 .content {
-    width: min(700px, 100%);
+    width: min(860px, 100%);
     background: var(--card);
-    border: 2px solid var(--line);
-    border-radius: 4px;
-    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
     position: relative;
     z-index: 1;
+    box-shadow: 0 20px 45px rgba(6, 10, 16, 0.35);
+    backdrop-filter: blur(10px);
+}
+
+.content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.035);
 }
 
 .brand-title-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
 .brand-inline-logo {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
 }
 
@@ -120,77 +138,80 @@ body {
 }
 
 .header {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     text-align: left;
 }
 
 .title {
-    font-size: clamp(1.7rem, 5vw, 2.1rem);
+    font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+    font-size: clamp(1.9rem, 5vw, 2.35rem);
     font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: 0.3px;
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
 }
 
 .subtitle {
-    font-size: 0.98rem;
+    font-size: 1.01rem;
     color: var(--muted);
-    line-height: 1.4;
-    margin-bottom: 6px;
+    line-height: 1.55;
+    margin-bottom: 8px;
+    max-width: 65ch;
 }
 
 .small-note {
-    font-size: 0.82rem;
-    color: #8e8ea3;
+    font-size: 0.9rem;
+    color: #9bacbf;
 }
 
 .upload-box {
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .drop-zone {
-    border: 2px dashed #6c6c80;
-    border-radius: 4px;
+    border: 1px dashed #647992;
+    border-radius: 12px;
     padding: 20px 14px;
     cursor: pointer;
-    transition: border-color 0.15s ease;
-    background: #14141b;
-    margin-bottom: 16px;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+    background: linear-gradient(145deg, rgba(20, 30, 41, 0.95), rgba(18, 24, 34, 0.95));
+    margin-bottom: 14px;
     display: block;
     text-align: center;
 }
 
 .drop-zone:hover {
-    border-color: #9494ac;
+    border-color: #88a4c0;
 }
 
 .drop-zone.hover {
-    background: #1c1c27;
-    border-color: #a6a6c2;
+    background: linear-gradient(145deg, rgba(31, 43, 57, 0.97), rgba(20, 29, 39, 0.98));
+    border-color: #a8c2dd;
+    transform: translateY(-1px);
 }
 
 .upload-icon {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 10px;
-    color: #c7c7db;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 11px;
+    color: #c0d6eb;
 }
 
 .drop-text {
-    font-size: 1rem;
+    font-size: 1.02rem;
     font-weight: 600;
     color: var(--text);
 }
 
 .drop-hint {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     color: var(--muted);
     margin-top: 6px;
 }
 
 .selected-file {
-    margin-top: 10px;
-    font-size: 0.86rem;
-    color: #ccccda;
+    margin-top: 11px;
+    font-size: 0.88rem;
+    color: #ccdaea;
     font-weight: 400;
     word-break: break-word;
 }
@@ -198,17 +219,20 @@ body {
 .button-group {
     display: flex;
     justify-content: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .btn {
-    padding: 10px 14px;
+    padding: 10px 15px;
     font-size: 0.95rem;
     font-weight: 600;
-    border: 1px solid #2a5074;
-    border-radius: 4px;
+    border: 1px solid #2f4f6b;
+    border-radius: 9px;
     cursor: pointer;
-    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.06s ease;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.08s ease;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    text-decoration: none;
 }
 
 .btn-primary {
@@ -236,17 +260,17 @@ body {
 }
 
 .result-card {
-    border-radius: 4px;
+    border-radius: 10px;
     border: 1px solid var(--line);
-    background: #14141b;
+    background: #141c26;
     padding: 12px;
 }
 
 .result-title {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #dddded;
+    color: #dde8f4;
 }
 
 .result-link-row {
@@ -261,18 +285,18 @@ body {
     min-width: 220px;
     width: 100%;
     border: 1px solid var(--line);
-    border-radius: 3px;
-    background: #0f0f15;
+    border-radius: 7px;
+    background: #10161e;
     padding: 8px 10px;
     font-size: 0.88rem;
-    color: #f0f0fb;
+    color: #edf4ff;
 }
 
 .btn-copy {
-    border: 1px solid #666681;
-    background: #222231;
-    color: #ececf8;
-    border-radius: 3px;
+    border: 1px solid #556981;
+    background: #202b39;
+    color: #e8f1fb;
+    border-radius: 7px;
     padding: 8px 10px;
     font-size: 0.86rem;
     font-weight: 600;
@@ -280,11 +304,11 @@ body {
 }
 
 .btn-copy:hover {
-    background: #2c2c3e;
+    background: #2a384a;
 }
 
 .status {
-    border-radius: 6px;
+    border-radius: 9px;
     border: 1px solid var(--line);
     padding: 10px 12px;
     font-size: 0.9rem;
@@ -304,9 +328,9 @@ body {
 }
 
 .status.info {
-    background: #182334;
-    border-color: #2b4467;
-    color: #b7d2ff;
+    background: #1a2737;
+    border-color: #3a5678;
+    color: #c7ddf7;
 }
 
 .legal-overlay {
@@ -325,7 +349,7 @@ body {
     display: grid;
     gap: 8px;
     text-align: center;
-    background: rgba(26, 26, 33, 0.9);
+    background: rgba(20, 27, 35, 0.9);
 }
 
 .site-footer p {
@@ -339,12 +363,12 @@ body {
 }
 
 .site-footer a {
-    color: #9bc9ff;
+    color: #a8d0fb;
     text-decoration: none;
 }
 
 .site-footer a:hover {
-    color: #c4e0ff;
+    color: #d3e8ff;
     text-decoration: underline;
 }
 
@@ -457,12 +481,12 @@ body {
 
 @media (max-width: 600px) {
     .overlay {
-        padding: 10px;
+        padding: 12px;
     }
 
     .content {
-        padding: 14px;
-        border-radius: 6px;
+        padding: 15px;
+        border-radius: 12px;
     }
 
     .page-shell {
@@ -474,11 +498,17 @@ body {
     }
 
     .button-group {
-        display: block;
+        display: grid;
+        gap: 8px;
     }
 
     .btn {
         width: 100%;
+    }
+
+    .brand-inline-logo {
+        width: 32px;
+        height: 32px;
     }
 
     .legal-toc {
