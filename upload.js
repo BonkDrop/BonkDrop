@@ -1,4 +1,25 @@
 const API_URL = "https://api.bonkdrop.fr/api/upload";
+let selectedFile = null;
+
+function setSelectedFile(file, fileInput, selectedFileText) {
+    selectedFile = file || null;
+
+    if (fileInput && selectedFile) {
+        try {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(selectedFile);
+            fileInput.files = dataTransfer.files;
+        } catch (_error) {
+            // Certains navigateurs limitent l'écriture directe de input.files.
+        }
+    }
+
+    if (selectedFileText) {
+        selectedFileText.textContent = selectedFile
+            ? `${selectedFile.name} (${Math.ceil(selectedFile.size / 1024)} KB)`
+            : "Aucun fichier sélectionné";
+    }
+}
 
 async function uploadFile(file) {
     const formData = new FormData();
@@ -14,26 +35,33 @@ async function uploadFile(file) {
 
 async function send() {
     const input = document.getElementById("fileInput");
-    const file = input?.files?.[0];
+    const file = selectedFile || input?.files?.[0];
 
     if (!file) {
         alert("Choisis un fichier");
         return;
     }
 
-    const result = await uploadFile(file);
-    console.log(result);
+    const link = document.getElementById("result");
 
-    if (result.success) {
-        const link = document.getElementById("result");
-        const safeId = encodeURIComponent(result.id || "");
-        const fallbackUrl = `https://api.bonkdrop.fr/file/${safeId}`;
+    try {
+        const result = await uploadFile(file);
+        console.log(result);
 
-        link.innerHTML = `
-            <p>Upload reussi</p>
-            <a href="${fallbackUrl}" target="_blank" rel="noopener noreferrer">${fallbackUrl}</a>
-        `;
-    } else {
+        if (result.success) {
+            const safeId = encodeURIComponent(result.id || "");
+            const fallbackUrl = `https://api.bonkdrop.fr/file/${safeId}`;
+
+            link.innerHTML = `
+                <p>Upload réussi</p>
+                <a href="${fallbackUrl}" target="_blank" rel="noopener noreferrer">${fallbackUrl}</a>
+            `;
+            return;
+        }
+
+        throw new Error(result.error || "UPLOAD_FAILED");
+    } catch (error) {
+        console.error("Upload error:", error);
         alert("Erreur upload");
     }
 }
@@ -48,9 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (fileInput && selectedFileText) {
         fileInput.addEventListener("change", () => {
             const file = fileInput.files?.[0];
-            selectedFileText.textContent = file
-                ? `${file.name} (${Math.ceil(file.size / 1024)} KB)`
-                : "Aucun fichier selectionne";
+            setSelectedFile(file, fileInput, selectedFileText);
         });
     }
 
@@ -72,11 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            fileInput.files = droppedFiles;
-            const file = droppedFiles[0];
-            if (selectedFileText) {
-                selectedFileText.textContent = `${file.name} (${Math.ceil(file.size / 1024)} KB)`;
-            }
+            setSelectedFile(droppedFiles[0], fileInput, selectedFileText);
         });
     }
 });
