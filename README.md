@@ -1,2 +1,19 @@
 # BonkDrop
 Un site web qui permet d'envoyer des images, des documents, des vidéos et tous autres types de fichiers qui sont déjà inclus dans la discussion sans devoir cliquer sur un lien. Fonctionne avec les e-mails, Discord, WhatsApp et tous autres types de messageries instantanées. Aucune inscription n'est requise et c'est 100 % gratuit :)
+
+## Securisation de la cle API
+
+La cle API ne doit jamais etre dans le frontend.
+
+1. Configure les variables d'environnement sur le serveur Node:
+
+- `BONKDROP_INTERNAL_API_KEY` = ta cle API privee
+- `BONKDROP_INTERNAL_UPLOAD_URL` = URL cible interne (par defaut `https://api.bonkdrop.fr/upload`)
+
+2. Lance le serveur proxy:
+
+```bash
+npm start
+```
+
+3. Le frontend appelle `https://api.bonkdrop.fr/api/upload` sans exposer la cle.

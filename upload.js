@@ -1,140 +1,82 @@
-const SUPABASE_FUNCTION_URL = "https://nyvwcggocbplisszqaju.supabase.co/functions/v1/upload";
+const API_URL = "https://api.bonkdrop.fr/api/upload";
 
-const dropZone = document.getElementById("drop-zone");
-const fileInput = document.getElementById("file-input");
-const uploadBtn = document.getElementById("uploadBtn");
-const result = document.getElementById("result");
-const selectedFileText = document.getElementById("selected-file");
+async function uploadFile(file) {
+    const formData = new FormData();
+    formData.append("file", file);
 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dndjZ2dvY2JwbGlzc3pxYWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDAwMzMsImV4cCI6MjA4ODcxNjAzM30.Ly8uzFkvhFtyWm0Fwa4gM1B-W4MJwiodOM464xLj7Os";
-
-let selectedFile = null;
-
-function renderStatus(type, message) {
-    result.innerHTML = `<div class="status ${type}">${message}</div>`;
-}
-
-function renderResult(url) {
-    result.innerHTML = `
-        <div class="result-card">
-            <p class="result-title">Lien pret a partager</p>
-            <div class="result-link-row">
-                <input class="result-link" type="text" value="${url}" readonly>
-                <button class="btn-copy" type="button" id="copyLinkBtn">Copier</button>
-            </div>
-        </div>
-    `;
-
-    const copyBtn = document.getElementById("copyLinkBtn");
-
-    copyBtn.addEventListener("click", async () => {
-        try {
-            await navigator.clipboard.writeText(url);
-            renderStatus("success", "Lien copie dans le presse-papiers.");
-        } catch {
-            renderStatus("error", "Impossible de copier automatiquement.");
-        }
+    const res = await fetch(API_URL, {
+        method: "POST",
+        body: formData,
     });
+
+    return await res.json();
 }
 
-function setSelectedFile(file) {
-    selectedFile = file;
+async function send() {
+    const input = document.getElementById("fileInput");
+    const file = input?.files?.[0];
 
-    selectedFileText.textContent = file
-        ? `${file.name} (${Math.ceil(file.size / 1024)} KB)`
-        : "Aucun fichier selectionne";
-}
-
-async function uploadSelectedFile() {
-
-    if (!selectedFile) {
-        renderStatus("error", "Selectionnez d'abord un fichier.");
+    if (!file) {
+        alert("Choisis un fichier");
         return;
     }
 
-    uploadBtn.disabled = true;
-    uploadBtn.textContent = "Upload en cours...";
+    const result = await uploadFile(file);
+    console.log(result);
 
-    renderStatus("info", "Upload en cours, veuillez patienter...");
+    if (result.success) {
+        const link = document.getElementById("result");
+        const safeId = encodeURIComponent(result.id || "");
+        const fallbackUrl = `https://api.bonkdrop.fr/file/${safeId}`;
 
-    try {
-
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-
-        const res = await fetch(SUPABASE_FUNCTION_URL, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-                "apikey": SUPABASE_ANON_KEY
-            },
-            body: formData
-        });
-
-        if (!res.ok) {
-            let errorMessage = `Erreur serveur (${res.status})`;
-
-            try {
-                const errorBody = await res.json();
-                if (errorBody?.message) {
-                    errorMessage = `${errorMessage}: ${errorBody.message}`;
-                }
-                if (errorBody?.details) {
-                    errorMessage = `${errorMessage} - ${errorBody.details}`;
-                }
-            } catch {
-                // Ignore JSON parse errors and keep fallback error message.
-            }
-
-            throw new Error(errorMessage);
-        }
-
-        const data = await res.json();
-
-        if (!data.url) {
-            throw new Error("Lien non reçu");
-        }
-
-        renderResult(data.url);
-
-    } catch (error) {
-
-        const details = error?.message ? ` (${error.message})` : "";
-
-        renderStatus("error", `Echec de l'upload${details}`);
-
-    } finally {
-
-        uploadBtn.disabled = false;
-        uploadBtn.textContent = "Uploader et obtenir le lien";
-
+        link.innerHTML = `
+            <p>Upload reussi</p>
+            <a href="${fallbackUrl}" target="_blank" rel="noopener noreferrer">${fallbackUrl}</a>
+        `;
+    } else {
+        alert("Erreur upload");
     }
-
 }
 
-dropZone.addEventListener("dragover", (event) => {
-    event.preventDefault();
-    dropZone.classList.add("hover");
-});
+window.send = send;
 
-dropZone.addEventListener("dragleave", () => {
-    dropZone.classList.remove("hover");
-});
+document.addEventListener("DOMContentLoaded", () => {
+    const fileInput = document.getElementById("fileInput");
+    const selectedFileText = document.getElementById("selected-file");
+    const dropZone = document.getElementById("drop-zone");
 
-dropZone.addEventListener("drop", (event) => {
-
-    event.preventDefault();
-
-    dropZone.classList.remove("hover");
-
-    if (event.dataTransfer.files?.length > 0) {
-        setSelectedFile(event.dataTransfer.files[0]);
+    if (fileInput && selectedFileText) {
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files?.[0];
+            selectedFileText.textContent = file
+                ? `${file.name} (${Math.ceil(file.size / 1024)} KB)`
+                : "Aucun fichier selectionne";
+        });
     }
 
-});
+    if (dropZone && fileInput) {
+        dropZone.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            dropZone.classList.add("hover");
+        });
 
-fileInput.addEventListener("change", () => {
-    setSelectedFile(fileInput.files?.[0] || null);
-});
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("hover");
+        });
 
-uploadBtn.addEventListener("click", uploadSelectedFile);
+        dropZone.addEventListener("drop", (event) => {
+            event.preventDefault();
+            dropZone.classList.remove("hover");
+            const droppedFiles = event.dataTransfer?.files;
+            if (!droppedFiles || droppedFiles.length === 0) {
+                return;
+            }
+
+            fileInput.files = droppedFiles;
+            const file = droppedFiles[0];
+            if (selectedFileText) {
+                selectedFileText.textContent = `${file.name} (${Math.ceil(file.size / 1024)} KB)`;
+            }
+        });
+    }
+});

@@ -6,7 +6,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="background-rotator.js" defer></script>
 <script src="upload.js" defer></script>
 <link rel="stylesheet" href="style.css">
@@ -38,7 +37,7 @@
             </div>
 
             <div class="upload-box">
-                <label for="file-input" id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
+                <label for="fileInput" id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
                     <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="17 8 12 3 7 8"></polyline>
@@ -47,11 +46,11 @@
                     <p class="drop-text">Glissez un fichier ici</p>
                     <p class="drop-hint">ou cliquez pour sélectionner</p>
                     <p id="selected-file" class="selected-file">Aucun fichier sélectionné</p>
-                    <input type="file" id="file-input" hidden>
+                    <input type="file" id="fileInput" hidden>
                 </label>
                 
                 <div class="button-group">
-                    <button id="uploadBtn" class="btn btn-primary" type="button">Uploader et obtenir le lien</button>
+                    <button id="uploadBtn" class="btn btn-primary" type="button" onclick="send()">Uploader et obtenir le lien</button>
                 </div>
             </div>
 
