@@ -13,14 +13,23 @@ const ALLOWED_ORIGINS = new Set([
 	"http://localhost:3000",
 ]);
 
+function isLocalOrigin(origin) {
+	try {
+		const url = new URL(origin);
+		return ["localhost", "127.0.0.1", "::1"].includes(url.hostname);
+	} catch (_error) {
+		return origin === "null";
+	}
+}
+
 function setCorsHeaders(req, res) {
 	const origin = req.headers.origin;
-	if (origin && ALLOWED_ORIGINS.has(origin)) {
+	if (origin && (ALLOWED_ORIGINS.has(origin) || isLocalOrigin(origin))) {
 		res.setHeader("Access-Control-Allow-Origin", origin);
 		res.setHeader("Vary", "Origin");
 	}
 	res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-	res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+	res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
 }
 
 app.options("/api/upload", (req, res) => {
@@ -31,18 +40,18 @@ app.options("/api/upload", (req, res) => {
 app.post("/api/upload", async (req, res) => {
 	setCorsHeaders(req, res);
 
-	if (!INTERNAL_API_KEY) {
-		res.status(500).json({ success: false, error: "SERVER_MISCONFIGURED" });
-		return;
-	}
-
 	try {
+		const headers = {
+			"content-type": req.headers["content-type"] || "application/octet-stream",
+		};
+
+		if (INTERNAL_API_KEY) {
+			headers["x-api-key"] = INTERNAL_API_KEY;
+		}
+
 		const upstreamResponse = await fetch(INTERNAL_UPLOAD_URL, {
 			method: "POST",
-			headers: {
-				"x-api-key": INTERNAL_API_KEY,
-				"content-type": req.headers["content-type"] || "application/octet-stream",
-			},
+			headers,
 			body: req,
 			duplex: "half",
 		});

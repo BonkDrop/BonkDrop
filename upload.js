@@ -30,11 +30,21 @@ async function uploadFile(file) {
         body: formData,
     });
 
-    return await res.json();
+    const responseText = await res.text();
+
+    try {
+        return JSON.parse(responseText);
+    } catch (_error) {
+        return {
+            success: false,
+            error: responseText || `HTTP_${res.status}`,
+        };
+    }
 }
 
 async function send() {
     const input = document.getElementById("fileInput");
+    const uploadBtn = document.getElementById("uploadBtn");
     const file = selectedFile || input?.files?.[0];
 
     if (!file) {
@@ -45,12 +55,16 @@ async function send() {
     const link = document.getElementById("result");
 
     try {
+        if (uploadBtn) {
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = "Upload en cours...";
+        }
+
         const result = await uploadFile(file);
         console.log(result);
 
         if (result.success) {
-            const safeId = encodeURIComponent(result.id || "");
-            const fallbackUrl = `https://api.bonkdrop.fr/file/${safeId}`;
+            const fallbackUrl = result.url || `https://api.bonkdrop.fr/file/${encodeURIComponent(result.id || "")}`;
 
             link.innerHTML = `
                 <p>Upload réussi</p>
@@ -63,6 +77,11 @@ async function send() {
     } catch (error) {
         console.error("Upload error:", error);
         alert("Erreur upload");
+    } finally {
+        if (uploadBtn) {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = "Uploader et obtenir le lien";
+        }
     }
 }
 
