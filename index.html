@@ -46,11 +46,11 @@
                     <p class="drop-text">Glissez un fichier ici</p>
                     <p class="drop-hint">ou cliquez pour sélectionner</p>
                     <p id="selected-file" class="selected-file">Aucun fichier sélectionné</p>
-                    <input type="file" id="fileInput" hidden>
+                    <input type="file" id="fileInput" class="file-input" tabindex="-1" aria-hidden="true">
                 </label>
                 
                 <div class="button-group">
-                    <button id="uploadBtn" class="btn btn-primary" type="button" onclick="send()">Uploader et obtenir le lien</button>
+                    <button id="uploadBtn" class="btn btn-primary" type="button">Uploader et obtenir le lien</button>
                 </div>
             </div>
 

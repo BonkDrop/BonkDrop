@@ -21,6 +21,16 @@ function setSelectedFile(file, fileInput, selectedFileText) {
     }
 }
 
+function setStatus(message, type = "info") {
+    const result = document.getElementById("result");
+
+    if (!result) {
+        return;
+    }
+
+    result.innerHTML = `<div class="status status-${type}">${message}</div>`;
+}
+
 async function uploadFile(file) {
     const formData = new FormData();
     formData.append("file", file);
@@ -48,11 +58,9 @@ async function send() {
     const file = selectedFile || input?.files?.[0];
 
     if (!file) {
-        alert("Choisis un fichier");
+        setStatus("Choisis un fichier avant d'uploader.", "error");
         return;
     }
-
-    const link = document.getElementById("result");
 
     try {
         if (uploadBtn) {
@@ -60,23 +68,25 @@ async function send() {
             uploadBtn.textContent = "Upload en cours...";
         }
 
+        setStatus("Upload en cours, veuillez patienter...", "info");
+
         const result = await uploadFile(file);
         console.log(result);
 
         if (result.success) {
             const fallbackUrl = result.url || `https://api.bonkdrop.fr/file/${encodeURIComponent(result.id || "")}`;
 
-            link.innerHTML = `
+            setStatus(`
                 <p>Upload réussi</p>
                 <a href="${fallbackUrl}" target="_blank" rel="noopener noreferrer">${fallbackUrl}</a>
-            `;
+            `, "success");
             return;
         }
 
         throw new Error(result.error || "UPLOAD_FAILED");
     } catch (error) {
         console.error("Upload error:", error);
-        alert("Erreur upload");
+        setStatus(`Erreur upload: ${error?.message || "inconnue"}`, "error");
     } finally {
         if (uploadBtn) {
             uploadBtn.disabled = false;
@@ -91,12 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById("fileInput");
     const selectedFileText = document.getElementById("selected-file");
     const dropZone = document.getElementById("drop-zone");
+    const uploadBtn = document.getElementById("uploadBtn");
 
     if (fileInput && selectedFileText) {
-        fileInput.addEventListener("change", () => {
+        const handleFileChange = () => {
             const file = fileInput.files?.[0];
             setSelectedFile(file, fileInput, selectedFileText);
-        });
+        };
+
+        fileInput.addEventListener("change", handleFileChange);
+        fileInput.addEventListener("input", handleFileChange);
     }
 
     if (dropZone && fileInput) {
@@ -118,6 +132,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             setSelectedFile(droppedFiles[0], fileInput, selectedFileText);
+        });
+    }
+
+    if (uploadBtn) {
+        uploadBtn.addEventListener("click", () => {
+            send();
         });
     }
 });
