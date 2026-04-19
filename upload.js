@@ -1,4 +1,4 @@
-const API_URL = "https://api.bonkdrop.fr/api/upload";
+const API_URL = "/api/upload";
 let selectedFile = null;
 
 function setSelectedFile(file, fileInput, selectedFileText) {

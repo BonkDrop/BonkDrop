@@ -16,4 +16,4 @@ La cle API ne doit jamais etre dans le frontend.
 npm start
 ```
 
-3. Le frontend appelle `https://api.bonkdrop.fr/api/upload` sans exposer la cle.
+3. Le frontend appelle `/api/upload` (route proxy du serveur Node) sans exposer la cle.
