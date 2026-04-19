@@ -1,4 +1,4 @@
-const API_URL = "/api/upload";
+const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/upload"];
 let selectedFile = null;
 
 function setSelectedFile(file, fileInput, selectedFileText) {
@@ -31,25 +31,59 @@ function setStatus(message, type = "info") {
     result.innerHTML = `<div class="status status-${type}">${message}</div>`;
 }
 
-async function uploadFile(file) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch(API_URL, {
-        method: "POST",
-        body: formData,
-    });
-
-    const responseText = await res.text();
-
+function parseResponseBody(responseText, status, endpoint) {
     try {
         return JSON.parse(responseText);
     } catch (_error) {
         return {
             success: false,
-            error: responseText || `HTTP_${res.status}`,
+            error: responseText || `HTTP_${status} on ${endpoint}`,
         };
     }
+}
+
+async function postFileToEndpoint(endpoint, file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(endpoint, {
+        method: "POST",
+        body: formData,
+    });
+
+    const responseText = await res.text();
+    const parsed = parseResponseBody(responseText, res.status, endpoint);
+
+    return {
+        status: res.status,
+        endpoint,
+        body: parsed,
+    };
+}
+
+async function uploadFile(file) {
+    let lastAttempt = null;
+
+    for (const endpoint of API_URLS) {
+        const attempt = await postFileToEndpoint(endpoint, file);
+        lastAttempt = attempt;
+
+        if (attempt.body?.success) {
+            return attempt.body;
+        }
+
+        // Si la route n'existe pas ici, on tente l'endpoint suivant.
+        if (attempt.status === 404 || attempt.status === 405) {
+            continue;
+        }
+
+        return attempt.body;
+    }
+
+    return {
+        success: false,
+        error: `HTTP_${lastAttempt?.status || "UNKNOWN"} on ${lastAttempt?.endpoint || "unknown endpoint"}`,
+    };
 }
 
 async function send() {
