@@ -61,38 +61,31 @@ async function postFileToEndpoint(endpoint, file) {
     };
 }
 
-async function uploadFile(file) {
-    let lastAttempt = null;
+async function uploadFiles(files) {
+    const formData = new FormData();
 
-    for (const endpoint of API_URLS) {
-        const attempt = await postFileToEndpoint(endpoint, file);
-        lastAttempt = attempt;
-
-        if (attempt.body?.success) {
-            return attempt.body;
-        }
-
-        // Si la route n'existe pas ici, on tente l'endpoint suivant.
-        if (attempt.status === 404 || attempt.status === 405) {
-            continue;
-        }
-
-        return attempt.body;
+    for (const file of files) {
+        formData.append("files", file);
     }
 
-    return {
-        success: false,
-        error: `HTTP_${lastAttempt?.status || "UNKNOWN"} on ${lastAttempt?.endpoint || "unknown endpoint"}`,
-    };
+    const res = await fetch("https://api.bonkdrop.fr/upload", {
+        method: "POST",
+        headers: {
+            "x-api-key": "TON_API_KEY_ICI"
+        },
+        body: formData
+    });
+
+    return await res.json();
 }
 
 async function send() {
     const input = document.getElementById("fileInput");
     const uploadBtn = document.getElementById("uploadBtn");
-    const file = selectedFile || input?.files?.[0];
+    const files = input?.files || [];
 
-    if (!file) {
-        setStatus("Choisis un fichier avant d'uploader.", "error");
+    if (!files || files.length === 0) {
+        setStatus("Choisis un ou plusieurs fichiers", "error");
         return;
     }
 
@@ -102,25 +95,25 @@ async function send() {
             uploadBtn.textContent = "Upload en cours...";
         }
 
-        setStatus("Upload en cours, veuillez patienter...", "info");
+        setStatus("Upload en cours...", "info");
 
-        const result = await uploadFile(file);
+        const result = await uploadFiles(files);
         console.log(result);
 
         if (result.success) {
-            const fallbackUrl = result.url || `https://api.bonkdrop.fr/file/${encodeURIComponent(result.id || "")}`;
+            const links = result.files.map(f =>
+                `<a href="${f.url}" target="_blank">${f.url}</a>`
+            ).join("<br>");
 
             setStatus(`
-                <p>Upload réussi</p>
-                <a href="${fallbackUrl}" target="_blank" rel="noopener noreferrer">${fallbackUrl}</a>
+                <p>Upload réussi :</p>
+                ${links}
             `, "success");
-            return;
+        } else {
+            throw new Error(result.error || "UPLOAD_FAILED");
         }
-
-        throw new Error(result.error || "UPLOAD_FAILED");
-    } catch (error) {
-        console.error("Upload error:", error);
-        setStatus(`Erreur upload: ${error?.message || "inconnue"}`, "error");
+    } catch (e) {
+        setStatus("Erreur upload: " + e.message, "error");
     } finally {
         if (uploadBtn) {
             uploadBtn.disabled = false;
