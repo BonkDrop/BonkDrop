@@ -37,18 +37,19 @@
             </div>
 
             <div class="upload-box">
-                <label for="fileInput" id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
+                <div id="drop-zone" class="drop-zone" aria-label="Zone de depot de fichier">
                     <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="17 8 12 3 7 8"></polyline>
                         <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
-                    <p class="drop-text">Glissez un fichier ici</p>
-                    <p class="drop-hint">ou cliquez pour sélectionner</p>
-                    <div id="selected-file" class="selected-file">Aucun fichier sélectionné</div>
+                    <p class="drop-text">Glissez vos fichiers ici</p>
+                    <p class="drop-hint">ou <button id="folder-trigger" class="drop-hint-link" type="button">cliquez ici pour sélectionner un dossier</button></p>
+                    <div id="selected-file" class="selected-file">Aucun fichier ou dossier sélectionné</div>
                     <div id="files-list" class="files-list"></div>
                     <input type="file" id="fileInput" class="file-input" tabindex="-1" aria-hidden="true" multiple>
-                </label>
+                    <input type="file" id="folderInput" class="file-input" tabindex="-1" aria-hidden="true" multiple webkitdirectory directory>
+                </div>
                 
                 <div class="button-group">
                     <button id="uploadBtn" class="btn btn-primary" type="button">Uploader et obtenir le lien</button>

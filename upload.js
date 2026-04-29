@@ -223,6 +223,11 @@ async function postFileToEndpoint(endpoint, files) {
     const responseText = await res.text();
     const parsed = parseResponseBody(responseText, res.status, endpoint);
 
+    if (res.status === 413) {
+        parsed.error = "HTTP_413";
+        parsed.success = false;
+    }
+
     if (!res.ok && !parsed.error) {
         parsed.error = `HTTP_${res.status}`;
         parsed.success = false;
@@ -321,6 +326,8 @@ async function send() {
 
         if (message === "UPLOAD_TIMEOUT") {
             message = "Le serveur met trop de temps a repondre. Reessayez dans quelques instants.";
+        } else if (message === "HTTP_413") {
+            message = "Le fichier est trop volumineux pour le serveur actuel (limite nginx/proxy).";
         } else if (message === "MISSING_SERVER_API_KEY") {
             message = "Configuration serveur incomplete: cle API absente sur le proxy.";
         } else if (message === "UNAUTHORIZED" || message === "HTTP_401") {
@@ -340,15 +347,8 @@ window.send = send;
 
 document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById("fileInput");
-    // Autoriser la sélection de dossiers via le sélecteur de fichiers (Chrome/Edge/Firefox compat.)
-    if (fileInput) {
-        try {
-            fileInput.setAttribute("webkitdirectory", "");
-            fileInput.setAttribute("directory", "");
-            fileInput.setAttribute("mozdirectory", "");
-            fileInput.setAttribute("msdirectory", "");
-        } catch (_e) {}
-    }
+    const folderInput = document.getElementById("folderInput");
+    const folderTrigger = document.getElementById("folder-trigger");
     const dropZone = document.getElementById("drop-zone");
     const uploadBtn = document.getElementById("uploadBtn");
 
@@ -365,7 +365,38 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.addEventListener("input", handleFileChange);
     }
 
+    if (folderInput) {
+        const handleFolderChange = () => {
+            const files = folderInput.files;
+            if (files && files.length > 0) {
+                addFilesToSelection(Array.from(files));
+            }
+            folderInput.value = "";
+        };
+
+        folderInput.addEventListener("change", handleFolderChange);
+        folderInput.addEventListener("input", handleFolderChange);
+    }
+
+    if (folderTrigger && folderInput) {
+        folderTrigger.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            folderInput.click();
+        });
+    }
+
     if (dropZone && fileInput) {
+        dropZone.addEventListener("click", (event) => {
+            const target = event.target;
+            if (target instanceof Element) {
+                if (target.closest(".file-remove-btn") || target.closest("#folder-trigger")) {
+                    return;
+                }
+            }
+            fileInput.click();
+        });
+
         dropZone.addEventListener("dragover", (event) => {
             event.preventDefault();
             dropZone.classList.add("hover");
