@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,6 +13,15 @@ const ALLOWED_ORIGINS = new Set([
 	"https://bonkdrop.github.io",
 	"http://localhost:3000",
 ]);
+
+// Serveur les fichiers statiques
+app.use(express.static(path.join(__dirname), {
+	setHeaders: (res, filePath) => {
+		if (filePath.endsWith('.html')) {
+			res.setHeader('Content-Type', 'text/html');
+		}
+	}
+}));
 
 function isLocalOrigin(origin) {
 	try {
@@ -41,14 +51,18 @@ app.post("/api/upload", async (req, res) => {
 	setCorsHeaders(req, res);
 
 	try {
-		const headers = {
-			"content-type": req.headers["content-type"] || "application/octet-stream",
-		};
+		const headers = {};
+
+		// Copier les headers pertinents de la requête client
+		if (req.headers["content-type"]) {
+			headers["content-type"] = req.headers["content-type"];
+		}
 
 		if (INTERNAL_API_KEY) {
 			headers["x-api-key"] = INTERNAL_API_KEY;
 		}
 
+		// Faire la requête en transférant le stream du corps
 		const upstreamResponse = await fetch(INTERNAL_UPLOAD_URL, {
 			method: "POST",
 			headers,
