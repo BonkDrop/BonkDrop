@@ -68,11 +68,8 @@ async function uploadFiles(files) {
         formData.append("files", file);
     }
 
-    const res = await fetch("https://api.bonkdrop.fr/upload", {
+    const res = await fetch("/api/upload", {
         method: "POST",
-        headers: {
-            "x-api-key": "TON_API_KEY_ICI"
-        },
         body: formData
     });
 
