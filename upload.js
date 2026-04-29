@@ -1,6 +1,7 @@
 const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/upload"];
 const MAX_TOTAL_SIZE = 2 * 1024 * 1024 * 1024;
 const MAX_FILES_COUNT = 1000;
+const UPLOAD_TIMEOUT_MS = 90 * 1000;
 let selectedFile = null;
 let selectedFiles = [];
 
@@ -141,26 +142,70 @@ async function postFileToEndpoint(endpoint, file) {
 }
 
 async function uploadFiles(files) {
-    const formData = new FormData();
+    const errors = [];
 
-    for (const file of files) {
-        formData.append("files", file);
+    for (let i = 0; i < API_URLS.length; i++) {
+        const endpoint = API_URLS[i];
+        const isLastEndpoint = i === API_URLS.length - 1;
+        const formData = new FormData();
+
+        for (const file of files) {
+            formData.append("files", file);
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
+
+        try {
+            if (i > 0) {
+                setStatus("Le serveur principal ne répond pas, nouvelle tentative...", "info");
+            }
+
+            const res = await fetch(endpoint, {
+                method: "POST",
+                body: formData,
+                signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            const responseText = await res.text();
+            const parsed = parseResponseBody(responseText, res.status, endpoint);
+
+            if (res.ok && parsed.success !== false) {
+                if (typeof parsed.success === "undefined") {
+                    parsed.success = true;
+                }
+                return parsed;
+            }
+
+            const shouldFallback = !isLastEndpoint && (res.status === 404 || res.status === 405 || res.status >= 500);
+            errors.push(`${endpoint}: HTTP_${res.status}`);
+
+            if (!shouldFallback) {
+                if (!parsed.error) {
+                    parsed.error = `HTTP_${res.status}`;
+                }
+                parsed.success = false;
+                return parsed;
+            }
+        } catch (error) {
+            clearTimeout(timeoutId);
+
+            const isTimeout = error && error.name === "AbortError";
+            const reason = isTimeout ? `TIMEOUT_${UPLOAD_TIMEOUT_MS}MS` : (error?.message || "NETWORK_ERROR");
+            errors.push(`${endpoint}: ${reason}`);
+
+            if (isLastEndpoint) {
+                break;
+            }
+        }
     }
 
-    const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData
-    });
-
-    const responseText = await res.text();
-    const parsed = parseResponseBody(responseText, res.status, "/api/upload");
-    
-    if (!res.ok && !parsed.error) {
-        parsed.error = `HTTP_${res.status}`;
-        parsed.success = false;
-    }
-    
-    return parsed;
+    return {
+        success: false,
+        error: errors.join(" | ") || "UPLOAD_FAILED",
+    };
 }
 
 async function send() {
