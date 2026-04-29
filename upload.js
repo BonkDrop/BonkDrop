@@ -152,7 +152,15 @@ async function uploadFiles(files) {
         body: formData
     });
 
-    return await res.json();
+    const responseText = await res.text();
+    const parsed = parseResponseBody(responseText, res.status, "/api/upload");
+    
+    if (!res.ok && !parsed.error) {
+        parsed.error = `HTTP_${res.status}`;
+        parsed.success = false;
+    }
+    
+    return parsed;
 }
 
 async function send() {
