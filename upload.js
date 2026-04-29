@@ -257,6 +257,7 @@ async function uploadFiles(files) {
 
         const shouldFallback = !isLastEndpoint && (
             attempt.status === 0 ||
+            attempt.status === 413 ||
             attempt.status === 404 ||
             attempt.status === 405 ||
             attempt.status === 401 ||
