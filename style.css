@@ -221,6 +221,62 @@ body {
     word-break: break-word;
 }
 
+.files-list {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    gap: 4px;
+}
+
+.file-name {
+    flex: 1;
+    font-size: 0.8rem;
+    color: var(--text);
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+.file-size {
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.file-remove-btn {
+    background: none;
+    border: none;
+    color: #f2c0c9;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.file-remove-btn:hover {
+    background: rgba(242, 192, 201, 0.1);
+    color: #ff8a9a;
+}
+
 .button-group {
     display: flex;
     justify-content: flex-start;
