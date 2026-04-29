@@ -1,7 +1,7 @@
 const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/upload"];
+const UPLOAD_TIMEOUT_MS = 45000;
 const MAX_TOTAL_SIZE = 2 * 1024 * 1024 * 1024;
 const MAX_FILES_COUNT = 1000;
-const UPLOAD_TIMEOUT_MS = 90 * 1000;
 let selectedFile = null;
 let selectedFiles = [];
 
@@ -122,17 +122,111 @@ function parseResponseBody(responseText, status, endpoint) {
     }
 }
 
-async function postFileToEndpoint(endpoint, file) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
+// Parcours récursif des DataTransferItem pour récupérer les fichiers dans les dossiers déposés
+function readAllEntries(reader) {
+    return new Promise((resolve, reject) => {
+        reader.readEntries(function (results) {
+            resolve(results);
+        }, reject);
     });
+}
+
+async function traverseFileEntry(entry, path = "") {
+    if (entry.isFile) {
+        return new Promise((resolve) => {
+            entry.file((file) => {
+                // Attacher un chemin relatif utile si nécessaire
+                try { file.relativePath = path + file.name; } catch (_e) {}
+                resolve([file]);
+            }, () => resolve([]));
+        });
+    }
+
+    if (entry.isDirectory) {
+        const files = [];
+        const reader = entry.createReader();
+        let entries = await readAllEntries(reader);
+        // readEntries peut renvoyer par morceaux; continuer jusqu'à vide
+        while (entries.length > 0) {
+            for (const e of entries) {
+                const nested = await traverseFileEntry(e, path + entry.name + "/");
+                for (const f of nested) files.push(f);
+            }
+            entries = await readAllEntries(reader);
+        }
+        return files;
+    }
+
+    return [];
+}
+
+async function getFilesFromDataTransferItems(items) {
+    const files = [];
+    const entryPromises = [];
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (typeof item.webkitGetAsEntry === "function") {
+            const entry = item.webkitGetAsEntry();
+            if (entry) entryPromises.push(traverseFileEntry(entry, ""));
+        } else if (item.kind === "file") {
+            const f = item.getAsFile();
+            if (f) files.push(f);
+        }
+    }
+
+    if (entryPromises.length > 0) {
+        const results = await Promise.all(entryPromises);
+        for (const arr of results) {
+            for (const f of arr) files.push(f);
+        }
+    }
+
+    return files;
+}
+
+async function postFileToEndpoint(endpoint, files) {
+    const formData = new FormData();
+    for (const file of files) {
+        formData.append("files", file);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
+
+    let res;
+    try {
+        res = await fetch(endpoint, {
+            method: "POST",
+            body: formData,
+            signal: controller.signal,
+        });
+    } catch (error) {
+        clearTimeout(timeoutId);
+        if (error && error.name === "AbortError") {
+            return {
+                status: 0,
+                endpoint,
+                body: { success: false, error: "UPLOAD_TIMEOUT" },
+            };
+        }
+
+        return {
+            status: 0,
+            endpoint,
+            body: { success: false, error: "NETWORK_ERROR" },
+        };
+    }
+
+    clearTimeout(timeoutId);
 
     const responseText = await res.text();
     const parsed = parseResponseBody(responseText, res.status, endpoint);
+
+    if (!res.ok && !parsed.error) {
+        parsed.error = `HTTP_${res.status}`;
+        parsed.success = false;
+    }
 
     return {
         status: res.status,
@@ -142,70 +236,40 @@ async function postFileToEndpoint(endpoint, file) {
 }
 
 async function uploadFiles(files) {
-    const errors = [];
+    let lastAttempt = null;
 
-    for (let i = 0; i < API_URLS.length; i++) {
-        const endpoint = API_URLS[i];
-        const isLastEndpoint = i === API_URLS.length - 1;
-        const formData = new FormData();
+    for (let index = 0; index < API_URLS.length; index++) {
+        const endpoint = API_URLS[index];
+        const attempt = await postFileToEndpoint(endpoint, files);
+        const error = attempt.body?.error;
+        const isLastEndpoint = index === API_URLS.length - 1;
 
-        for (const file of files) {
-            formData.append("files", file);
+        if (attempt.body?.success) {
+            return attempt.body;
         }
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
+        lastAttempt = attempt;
 
-        try {
-            if (i > 0) {
-                setStatus("Le serveur principal ne répond pas, nouvelle tentative...", "info");
-            }
+        const shouldFallback = !isLastEndpoint && (
+            attempt.status === 0 ||
+            attempt.status === 404 ||
+            attempt.status === 405 ||
+            attempt.status === 401 ||
+            attempt.status === 403 ||
+            error === "UPLOAD_TIMEOUT" ||
+            error === "NETWORK_ERROR"
+        );
 
-            const res = await fetch(endpoint, {
-                method: "POST",
-                body: formData,
-                signal: controller.signal,
-            });
-
-            clearTimeout(timeoutId);
-
-            const responseText = await res.text();
-            const parsed = parseResponseBody(responseText, res.status, endpoint);
-
-            if (res.ok && parsed.success !== false) {
-                if (typeof parsed.success === "undefined") {
-                    parsed.success = true;
-                }
-                return parsed;
-            }
-
-            const shouldFallback = !isLastEndpoint && (res.status === 404 || res.status === 405 || res.status >= 500);
-            errors.push(`${endpoint}: HTTP_${res.status}`);
-
-            if (!shouldFallback) {
-                if (!parsed.error) {
-                    parsed.error = `HTTP_${res.status}`;
-                }
-                parsed.success = false;
-                return parsed;
-            }
-        } catch (error) {
-            clearTimeout(timeoutId);
-
-            const isTimeout = error && error.name === "AbortError";
-            const reason = isTimeout ? `TIMEOUT_${UPLOAD_TIMEOUT_MS}MS` : (error?.message || "NETWORK_ERROR");
-            errors.push(`${endpoint}: ${reason}`);
-
-            if (isLastEndpoint) {
-                break;
-            }
+        if (!shouldFallback) {
+            return attempt.body;
         }
     }
 
-    return {
-        success: false,
-        error: errors.join(" | ") || "UPLOAD_FAILED",
-    };
+    if (lastAttempt && lastAttempt.body) {
+        return lastAttempt.body;
+    }
+
+    return { success: false, error: "UPLOAD_FAILED" };
 }
 
 async function send() {
@@ -250,10 +314,20 @@ async function send() {
             selectedFiles = [];
             updateFilesList();
         } else {
-            throw new Error(result.error || "UPLOAD_FAILED");
+            throw new Error(result.error || `HTTP_${result.status || 0}`);
         }
     } catch (e) {
-        setStatus("Erreur upload: " + e.message, "error");
+        let message = e.message || "UPLOAD_FAILED";
+
+        if (message === "UPLOAD_TIMEOUT") {
+            message = "Le serveur met trop de temps a repondre. Reessayez dans quelques instants.";
+        } else if (message === "MISSING_SERVER_API_KEY") {
+            message = "Configuration serveur incomplete: cle API absente sur le proxy.";
+        } else if (message === "UNAUTHORIZED" || message === "HTTP_401") {
+            message = "Unauthorized: cle API invalide ou manquante sur le serveur d'upload.";
+        }
+
+        setStatus("Erreur upload: " + message, "error");
     } finally {
         if (uploadBtn) {
             uploadBtn.disabled = false;
@@ -266,6 +340,15 @@ window.send = send;
 
 document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById("fileInput");
+    // Autoriser la sélection de dossiers via le sélecteur de fichiers (Chrome/Edge/Firefox compat.)
+    if (fileInput) {
+        try {
+            fileInput.setAttribute("webkitdirectory", "");
+            fileInput.setAttribute("directory", "");
+            fileInput.setAttribute("mozdirectory", "");
+            fileInput.setAttribute("msdirectory", "");
+        } catch (_e) {}
+    }
     const dropZone = document.getElementById("drop-zone");
     const uploadBtn = document.getElementById("uploadBtn");
 
@@ -292,9 +375,23 @@ document.addEventListener("DOMContentLoaded", () => {
             dropZone.classList.remove("hover");
         });
 
-        dropZone.addEventListener("drop", (event) => {
+        dropZone.addEventListener("drop", async (event) => {
             event.preventDefault();
             dropZone.classList.remove("hover");
+
+            // Si le navigateur expose les items (permets dossiers), on les parcourt
+            const items = event.dataTransfer?.items;
+            if (items && items.length > 0) {
+                try {
+                    const filesFromItems = await getFilesFromDataTransferItems(items);
+                    if (filesFromItems && filesFromItems.length > 0) {
+                        addFilesToSelection(filesFromItems);
+                        return;
+                    }
+                } catch (_err) {
+                }
+            }
+
             const droppedFiles = event.dataTransfer?.files;
             if (!droppedFiles || droppedFiles.length === 0) {
                 return;

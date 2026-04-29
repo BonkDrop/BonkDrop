@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 
 const INTERNAL_UPLOAD_URL = process.env.BONKDROP_INTERNAL_UPLOAD_URL || "https://api.bonkdrop.fr/upload";
 const INTERNAL_API_KEY = process.env.BONKDROP_INTERNAL_API_KEY;
+const UPSTREAM_TIMEOUT_MS = Number(process.env.BONKDROP_UPLOAD_TIMEOUT_MS || 45000);
 
 const ALLOWED_ORIGINS = new Set([
 	"https://bonkdrop.fr",
@@ -50,6 +51,11 @@ app.options("/api/upload", (req, res) => {
 app.post("/api/upload", async (req, res) => {
 	setCorsHeaders(req, res);
 
+	if (!INTERNAL_API_KEY) {
+		res.status(500).json({ success: false, error: "MISSING_SERVER_API_KEY" });
+		return;
+	}
+
 	try {
 		const headers = {};
 
@@ -58,17 +64,28 @@ app.post("/api/upload", async (req, res) => {
 			headers["content-type"] = req.headers["content-type"];
 		}
 
-		if (INTERNAL_API_KEY) {
-			headers["x-api-key"] = INTERNAL_API_KEY;
+		headers["x-api-key"] = INTERNAL_API_KEY;
+
+		if (req.headers.authorization) {
+			headers.authorization = req.headers.authorization;
 		}
 
-		// Faire la requête en transférant le stream du corps
-		const upstreamResponse = await fetch(INTERNAL_UPLOAD_URL, {
-			method: "POST",
-			headers,
-			body: req,
-			duplex: "half",
-		});
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+
+		let upstreamResponse;
+		try {
+			// Faire la requête en transférant le stream du corps
+			upstreamResponse = await fetch(INTERNAL_UPLOAD_URL, {
+				method: "POST",
+				headers,
+				body: req,
+				signal: controller.signal,
+				duplex: "half",
+			});
+		} finally {
+			clearTimeout(timeoutId);
+		}
 
 		const contentType = upstreamResponse.headers.get("content-type") || "application/json";
 		res.status(upstreamResponse.status);
@@ -77,6 +94,11 @@ app.post("/api/upload", async (req, res) => {
 		const textBody = await upstreamResponse.text();
 		res.send(textBody);
 	} catch (error) {
+		if (error && error.name === "AbortError") {
+			res.status(504).json({ success: false, error: "UPLOAD_TIMEOUT" });
+			return;
+		}
+
 		console.error("Upload proxy error:", error);
 		res.status(502).json({ success: false, error: "UPLOAD_PROXY_ERROR" });
 	}
