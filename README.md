@@ -17,6 +17,6 @@ La cle API ne doit jamais etre dans le frontend.
 npm start
 ```
 
-3. Le frontend tente d'abord `/api/upload` (route proxy du serveur Node). En cas de `404/405`, il bascule automatiquement sur `https://api.bonkdrop.fr/upload`.
+3. Le frontend tente d'abord `/api/upload` (route proxy du serveur Node). En cas de `404/405`, il bascule automatiquement sur `https://api.bonkdrop.fr/api/upload`.
 
 Si tu recois `Unauthorized`, verifie en priorite que `BONKDROP_INTERNAL_API_KEY` est bien configuree sur le serveur Node.
