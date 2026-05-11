@@ -185,6 +185,28 @@ async function getFilesFromDataTransferItems(items) {
     return files;
 }
 
+async function getFilesFromDirectoryHandle(directoryHandle, currentPath = "") {
+    const files = [];
+
+    for await (const [name, handle] of directoryHandle.entries()) {
+        if (handle.kind === "file") {
+            const file = await handle.getFile();
+            try { file.relativePath = currentPath + name; } catch (_e) {}
+            files.push(file);
+            continue;
+        }
+
+        if (handle.kind === "directory") {
+            const nestedFiles = await getFilesFromDirectoryHandle(handle, currentPath + name + "/");
+            for (const nestedFile of nestedFiles) {
+                files.push(nestedFile);
+            }
+        }
+    }
+
+    return files;
+}
+
 async function postFileToEndpoint(endpoint, files) {
     const formData = new FormData();
     for (const file of files) {
@@ -380,9 +402,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (folderTrigger && folderInput) {
-        folderTrigger.addEventListener("click", (event) => {
+        folderTrigger.addEventListener("click", async (event) => {
             event.preventDefault();
             event.stopPropagation();
+
+            // Prefer native directory picker when available for explicit folder-only selection.
+            if (typeof window.showDirectoryPicker === "function") {
+                try {
+                    const selectedDir = await window.showDirectoryPicker();
+                    const pickedFiles = await getFilesFromDirectoryHandle(selectedDir);
+
+                    if (pickedFiles.length > 0) {
+                        addFilesToSelection(pickedFiles);
+                    }
+                    return;
+                } catch (error) {
+                    // User cancellation should not show an error.
+                    if (error && error.name === "AbortError") {
+                        return;
+                    }
+                }
+            }
+
+            // Fallback for browsers without File System Access API.
             folderInput.click();
         });
     }
