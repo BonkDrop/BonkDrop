@@ -352,7 +352,7 @@ async function send() {
         } else if (message === "HTTP_413") {
             message = "Le fichier est trop volumineux pour le serveur actuel (limite nginx/proxy).";
         } else if (message === "MISSING_SERVER_API_KEY") {
-            message = "Configuration serveur incomplete: cle API absente sur le proxy.";
+            message = "Config serveur invalide : manque clé api upload";
         } else if (message === "UNAUTHORIZED" || message === "HTTP_401") {
             message = "Unauthorized: cle API invalide ou manquante sur le serveur d'upload.";
         }
