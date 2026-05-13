@@ -228,6 +228,10 @@ body {
     color: #f0f7ff;
 }
 
+.drop-hint-link strong {
+    font-weight: 700;
+}
+
 .selected-file {
     margin-top: 11px;
     font-size: 0.88rem;
@@ -336,51 +340,69 @@ body {
 }
 
 .result-card {
-    border-radius: 10px;
-    border: 1px solid var(--line);
-    background: #141c26;
-    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #34485e;
+    background: linear-gradient(180deg, rgba(24, 34, 47, 0.96), rgba(18, 24, 33, 0.98));
+    padding: 14px;
+    box-shadow: 0 14px 30px rgba(6, 10, 16, 0.22);
 }
 
 .result-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #dde8f4;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #eef4fb;
 }
 
 .result-link-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
     align-items: center;
+    margin-top: 8px;
 }
 
 .result-link {
     flex: 1;
     min-width: 220px;
     width: 100%;
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    background: #10161e;
-    padding: 8px 10px;
-    font-size: 0.88rem;
-    color: #edf4ff;
+    border: 1px solid #4c647c;
+    border-radius: 10px;
+    background: rgba(16, 22, 30, 0.9);
+    padding: 10px 12px;
+    font-size: 0.92rem;
+    color: #f1f7ff;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition: border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+}
+
+.result-link:hover {
+    border-color: #6f8fab;
+    background: rgba(22, 31, 43, 0.95);
+    transform: translateY(-1px);
 }
 
 .btn-copy {
-    border: 1px solid #556981;
-    background: #202b39;
+    border: 1px solid #55708c;
+    background: linear-gradient(180deg, #243343, #1d2732);
     color: #e8f1fb;
-    border-radius: 7px;
-    padding: 8px 10px;
+    border-radius: 10px;
+    padding: 10px 12px;
     font-size: 0.86rem;
     font-weight: 600;
     cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-copy:hover {
-    background: #2a384a;
+    background: linear-gradient(180deg, #2d3f52, #233140);
+    border-color: #6a85a2;
+    transform: translateY(-1px);
+}
+
+.btn-copy:active {
+    transform: translateY(0);
 }
 
 .status {

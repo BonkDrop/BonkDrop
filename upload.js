@@ -122,6 +122,15 @@ function parseResponseBody(responseText, status, endpoint) {
     }
 }
 
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
 // Parcours récursif des DataTransferItem pour récupérer les fichiers dans les dossiers déposés
 function readAllEntries(reader) {
     return new Promise((resolve, reject) => {
@@ -300,6 +309,44 @@ async function uploadFiles(files) {
     return { success: false, error: "UPLOAD_FAILED" };
 }
 
+function renderSuccessResult(files) {
+    const result = document.getElementById("result");
+
+    if (!result) {
+        return;
+    }
+
+    const cards = files.map((file) => {
+        const safeUrl = escapeHtml(file.url);
+        return `
+            <div class="result-link-row">
+                <a class="result-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a>
+                <button class="btn-copy" type="button" data-copy-url="${safeUrl}">Copier</button>
+            </div>
+        `;
+    }).join("");
+
+    result.innerHTML = `
+        <div class="result-card">
+            <div class="result-title">Upload réussi</div>
+            ${cards}
+        </div>
+    `;
+}
+
+async function copyResultLink(url, button) {
+    try {
+        await navigator.clipboard.writeText(url);
+        const previousText = button.textContent;
+        button.textContent = "Copié";
+        setTimeout(() => {
+            button.textContent = previousText;
+        }, 1500);
+    } catch (_error) {
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+}
+
 async function send() {
     if (selectedFiles.length === 0) {
         setStatus("Choisissez un ou plusieurs fichiers", "error");
@@ -330,14 +377,7 @@ async function send() {
         console.log(result);
 
         if (result.success) {
-            const links = result.files.map(f =>
-                `<a href="${f.url}" target="_blank">${f.url}</a>`
-            ).join("<br>");
-
-            setStatus(`
-                <p>Upload réussi :</p>
-                ${links}
-            `, "success");
+            renderSuccessResult(result.files);
 
             selectedFiles = [];
             updateFilesList();
@@ -478,6 +518,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if (uploadBtn) {
         uploadBtn.addEventListener("click", () => {
             send();
+        });
+    }
+
+    const result = document.getElementById("result");
+    if (result) {
+        result.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) {
+                return;
+            }
+
+            const copyButton = target.closest(".btn-copy");
+            if (!(copyButton instanceof HTMLButtonElement)) {
+                return;
+            }
+
+            const url = copyButton.dataset.copyUrl;
+            if (!url) {
+                return;
+            }
+
+            copyResultLink(url, copyButton);
         });
     }
 });
