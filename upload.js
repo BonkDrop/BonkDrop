@@ -7,6 +7,30 @@ let selectedFiles = [];
 let fileProgressPercentages = [];
 let isUploading = false;
 
+function setAllFilesProgress(percent) {
+    const safePercent = Math.max(0, Math.min(100, percent));
+    fileProgressPercentages = selectedFiles.map(() => safePercent);
+    updateProgressUI();
+}
+
+function nudgeFallbackProgress(maxPercent = 90) {
+    if (selectedFiles.length === 0) {
+        return;
+    }
+
+    if (fileProgressPercentages.length !== selectedFiles.length) {
+        fileProgressPercentages = selectedFiles.map(() => 0);
+    }
+
+    fileProgressPercentages = fileProgressPercentages.map((value) => {
+        const current = Number.isFinite(value) ? value : 0;
+        const step = current < 30 ? 4 : current < 65 ? 2.5 : 1.2;
+        return Math.min(maxPercent, current + step);
+    });
+
+    updateProgressUI();
+}
+
 function formatFileSize(bytes) {
     if (bytes < 1024 * 1024) {
         return Math.ceil(bytes / 1024) + " KB";
@@ -454,6 +478,8 @@ async function send() {
 
     const uploadBtn = document.getElementById("uploadBtn");
     const totalFilesSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+    let fallbackProgressTimer = null;
+    let receivedRealProgress = false;
 
     try {
         isUploading = true;
@@ -469,7 +495,15 @@ async function send() {
 
         setStatus("Upload en cours...", "info");
 
+        fallbackProgressTimer = setInterval(() => {
+            if (!receivedRealProgress) {
+                nudgeFallbackProgress(88);
+            }
+        }, 180);
+
         const result = await uploadFiles(selectedFiles, (loaded, total) => {
+            receivedRealProgress = true;
+
             if (totalFilesSize <= 0) {
                 return;
             }
@@ -485,9 +519,10 @@ async function send() {
         console.log(result);
 
         if (result.success) {
-            fileProgressPercentages = selectedFiles.map(() => 100);
-            updateProgressUI();
+            setAllFilesProgress(100);
             renderSuccessResult(result.files);
+
+            await new Promise((resolve) => setTimeout(resolve, 350));
 
             selectedFiles = [];
             fileProgressPercentages = [];
@@ -510,6 +545,10 @@ async function send() {
 
         setStatus("Erreur upload: " + message, "error");
     } finally {
+        if (fallbackProgressTimer) {
+            clearInterval(fallbackProgressTimer);
+        }
+
         isUploading = false;
         setUploadActivity(false);
 
