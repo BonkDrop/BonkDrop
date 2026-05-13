@@ -260,6 +260,13 @@ body {
     gap: 4px;
 }
 
+.file-item-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+}
+
 .file-name {
     flex: 1;
     font-size: 0.8rem;
@@ -272,6 +279,36 @@ body {
     font-size: 0.75rem;
     color: var(--muted);
     white-space: nowrap;
+}
+
+.file-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file-progress {
+    position: relative;
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(116, 144, 171, 0.24);
+    overflow: hidden;
+}
+
+.file-progress-bar {
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #5c8fbf 0%, #7bb4de 100%);
+    transition: width 0.2s ease;
+}
+
+.file-progress-label {
+    font-size: 0.72rem;
+    color: #a8c4df;
+    min-width: 34px;
+    text-align: right;
 }
 
 .file-remove-btn {
@@ -299,8 +336,74 @@ body {
 .button-group {
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+.upload-activity {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    border: 1px solid #2f4257;
+    background: rgba(21, 30, 41, 0.78);
+}
+
+.upload-activity-text {
+    font-size: 0.82rem;
+    color: #9db4ca;
+    white-space: nowrap;
+}
+
+.upload-activity-bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 14px;
+}
+
+.upload-activity-bars span {
+    width: 3px;
+    height: 4px;
+    border-radius: 999px;
+    background: #6f9ec7;
+    transform-origin: bottom;
+    opacity: 0.45;
+}
+
+.upload-activity.active {
+    border-color: #4f7092;
+    background: rgba(22, 36, 52, 0.9);
+}
+
+.upload-activity.active .upload-activity-text {
+    color: #c7ddf3;
+}
+
+.upload-activity.active .upload-activity-bars span {
+    opacity: 1;
+    animation: upload-bars 0.8s ease-in-out infinite;
+}
+
+.upload-activity.active .upload-activity-bars span:nth-child(2) {
+    animation-delay: 0.12s;
+}
+
+.upload-activity.active .upload-activity-bars span:nth-child(3) {
+    animation-delay: 0.24s;
+}
+
+@keyframes upload-bars {
+    0%,
+    100% {
+        transform: scaleY(0.4);
+    }
+
+    50% {
+        transform: scaleY(1.4);
+    }
 }
 
 .btn {
@@ -598,6 +701,11 @@ body {
     .button-group {
         display: grid;
         gap: 8px;
+    }
+
+    .upload-activity {
+        width: 100%;
+        justify-content: center;
     }
 
     .btn {

@@ -1,9 +1,11 @@
-const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/api/upload"];
+const API_URLS = ["https://api.bonkdrop.fr/api/upload"];
 const UPLOAD_TIMEOUT_MS = 45000;
 const MAX_TOTAL_SIZE = 2 * 1024 * 1024 * 1024;
 const MAX_FILES_COUNT = 1000;
 let selectedFile = null;
 let selectedFiles = [];
+let fileProgressPercentages = [];
+let isUploading = false;
 
 function formatFileSize(bytes) {
     if (bytes < 1024 * 1024) {
@@ -28,12 +30,80 @@ function addFilesToSelection(newFiles) {
         selectedFiles = selectedFiles.slice(0, MAX_FILES_COUNT);
     }
 
+    fileProgressPercentages = selectedFiles.map(() => 0);
+
     updateFilesList();
 }
 
 function removeFileFromSelection(index) {
     selectedFiles.splice(index, 1);
+    fileProgressPercentages.splice(index, 1);
     updateFilesList();
+}
+
+function setUploadActivity(active) {
+    const activity = document.getElementById("upload-activity");
+    const activityText = document.getElementById("upload-activity-text");
+
+    if (!activity || !activityText) {
+        return;
+    }
+
+    activity.classList.toggle("active", active);
+    activityText.textContent = active ? "Upload en cours" : "En attente";
+}
+
+function updateProgressUI() {
+    const itemElements = document.querySelectorAll(".file-item");
+
+    itemElements.forEach((itemElement, index) => {
+        const percent = Math.max(0, Math.min(100, Math.round(fileProgressPercentages[index] || 0)));
+        const progressElement = itemElement.querySelector(".file-progress");
+        const barElement = itemElement.querySelector(".file-progress-bar");
+        const labelElement = itemElement.querySelector(".file-progress-label");
+
+        if (progressElement) {
+            progressElement.setAttribute("aria-valuenow", String(percent));
+        }
+
+        if (barElement) {
+            barElement.style.width = percent + "%";
+        }
+
+        if (labelElement) {
+            labelElement.textContent = percent + "%";
+        }
+    });
+}
+
+function updatePerFileProgressFromLoadedBytes(loadedBytes) {
+    let remaining = Math.max(0, loadedBytes);
+
+    fileProgressPercentages = selectedFiles.map((file) => {
+        if (!file || file.size <= 0) {
+            return 100;
+        }
+
+        if (remaining <= 0) {
+            return 0;
+        }
+
+        if (remaining >= file.size) {
+            remaining -= file.size;
+            return 100;
+        }
+
+        const percent = (remaining / file.size) * 100;
+        remaining = 0;
+        return percent;
+    });
+
+    updateProgressUI();
+}
+
+function resetProgressState() {
+    fileProgressPercentages = selectedFiles.map(() => 0);
+    updateProgressUI();
 }
 
 function updateFilesList() {
@@ -52,6 +122,7 @@ function updateFilesList() {
         fileListElement.innerHTML = "";
         selectedFileText.textContent = "Aucun fichier sélectionné";
         selectedFileText.style.color = "";
+        fileProgressPercentages = [];
         if (fileInput) {
             fileInput.value = "";
         }
@@ -79,15 +150,22 @@ function updateFilesList() {
 
     const listHTML = selectedFiles.map((file, index) => `
         <div class="file-item">
-            <span class="file-name">${file.name}</span>
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+            <span class="file-name">${escapeHtml(file.name)}</span>
+            <div class="file-progress-row">
+                <div class="file-progress" role="progressbar" aria-label="Progression upload ${escapeHtml(file.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="file-progress-bar"></div>
+                </div>
+                <span class="file-progress-label">0%</span>
+            </div>
+            <div class="file-item-meta">
                 <span class="file-size">${formatFileSize(file.size)}</span>
-                <button class="file-remove-btn" onclick="removeFileFromSelection(${index})" type="button" aria-label="Supprimer ${file.name}">×</button>
+                <button class="file-remove-btn" onclick="removeFileFromSelection(${index})" type="button" aria-label="Supprimer ${escapeHtml(file.name)}" ${isUploading ? "disabled" : ""}>×</button>
             </div>
         </div>
     `).join("");
 
     fileListElement.innerHTML = listHTML;
+    updateProgressUI();
 
     if (fileInput) {
         try {
@@ -216,67 +294,78 @@ async function getFilesFromDirectoryHandle(directoryHandle, currentPath = "") {
     return files;
 }
 
-async function postFileToEndpoint(endpoint, files) {
+async function postFileToEndpoint(endpoint, files, onProgress) {
     const formData = new FormData();
     for (const file of files) {
         formData.append("files", file);
     }
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
+    return await new Promise((resolve) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", endpoint, true);
+        xhr.timeout = UPLOAD_TIMEOUT_MS;
 
-    let res;
-    try {
-        res = await fetch(endpoint, {
-            method: "POST",
-            body: formData,
-            signal: controller.signal,
-        });
-    } catch (error) {
-        clearTimeout(timeoutId);
-        if (error && error.name === "AbortError") {
-            return {
+        xhr.upload.onprogress = (event) => {
+            if (typeof onProgress === "function" && event.lengthComputable) {
+                onProgress(event.loaded, event.total);
+            }
+        };
+
+        xhr.onload = () => {
+            if (typeof onProgress === "function") {
+                onProgress(1, 1);
+            }
+
+            const status = xhr.status;
+            const responseText = xhr.responseText || "";
+            const parsed = parseResponseBody(responseText, status, endpoint);
+
+            if (status === 413) {
+                parsed.error = "HTTP_413";
+                parsed.success = false;
+            }
+
+            if ((status < 200 || status >= 300) && !parsed.error) {
+                parsed.error = `HTTP_${status}`;
+                parsed.success = false;
+            }
+
+            resolve({
+                status,
+                endpoint,
+                body: parsed,
+            });
+        };
+
+        xhr.onerror = () => {
+            resolve({
+                status: 0,
+                endpoint,
+                body: { success: false, error: "NETWORK_ERROR" },
+            });
+        };
+
+        xhr.ontimeout = () => {
+            resolve({
                 status: 0,
                 endpoint,
                 body: { success: false, error: "UPLOAD_TIMEOUT" },
-            };
-        }
-
-        return {
-            status: 0,
-            endpoint,
-            body: { success: false, error: "NETWORK_ERROR" },
+            });
         };
-    }
 
-    clearTimeout(timeoutId);
-
-    const responseText = await res.text();
-    const parsed = parseResponseBody(responseText, res.status, endpoint);
-
-    if (res.status === 413) {
-        parsed.error = "HTTP_413";
-        parsed.success = false;
-    }
-
-    if (!res.ok && !parsed.error) {
-        parsed.error = `HTTP_${res.status}`;
-        parsed.success = false;
-    }
-
-    return {
-        status: res.status,
-        endpoint,
-        body: parsed,
-    };
+        xhr.send(formData);
+    });
 }
 
-async function uploadFiles(files) {
+async function uploadFiles(files, onProgress) {
     let lastAttempt = null;
 
     for (let index = 0; index < API_URLS.length; index++) {
         const endpoint = API_URLS[index];
-        const attempt = await postFileToEndpoint(endpoint, files);
+        if (typeof onProgress === "function") {
+            onProgress(0, 1);
+        }
+        const attempt = await postFileToEndpoint(endpoint, files, onProgress);
         const error = attempt.body?.error;
         const isLastEndpoint = index === API_URLS.length - 1;
 
@@ -364,22 +453,44 @@ async function send() {
     }
 
     const uploadBtn = document.getElementById("uploadBtn");
+    const totalFilesSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
 
     try {
+        isUploading = true;
+        resetProgressState();
+        setUploadActivity(true);
+
         if (uploadBtn) {
             uploadBtn.disabled = true;
             uploadBtn.textContent = "Upload en cours...";
         }
 
+        updateFilesList();
+
         setStatus("Upload en cours...", "info");
 
-        const result = await uploadFiles(selectedFiles);
+        const result = await uploadFiles(selectedFiles, (loaded, total) => {
+            if (totalFilesSize <= 0) {
+                return;
+            }
+
+            let effectiveLoaded = loaded;
+            if (total > 0) {
+                const ratio = Math.max(0, Math.min(1, loaded / total));
+                effectiveLoaded = ratio * totalFilesSize;
+            }
+
+            updatePerFileProgressFromLoadedBytes(effectiveLoaded);
+        });
         console.log(result);
 
         if (result.success) {
+            fileProgressPercentages = selectedFiles.map(() => 100);
+            updateProgressUI();
             renderSuccessResult(result.files);
 
             selectedFiles = [];
+            fileProgressPercentages = [];
             updateFilesList();
         } else {
             throw new Error(result.error || `HTTP_${result.status || 0}`);
@@ -399,10 +510,15 @@ async function send() {
 
         setStatus("Erreur upload: " + message, "error");
     } finally {
+        isUploading = false;
+        setUploadActivity(false);
+
         if (uploadBtn) {
             uploadBtn.disabled = false;
             uploadBtn.textContent = "Uploader et obtenir le lien";
         }
+
+        updateFilesList();
     }
 }
 
