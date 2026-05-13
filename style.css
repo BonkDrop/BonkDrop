@@ -218,14 +218,15 @@ body {
     border: none;
     color: #d7e8f9;
     font: inherit;
+    font-weight: 700;
     padding: 0;
     cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration: none;
 }
 
 .drop-hint-link:hover {
     color: #f0f7ff;
+    text-decoration: none;
 }
 
 .drop-hint-link strong {
