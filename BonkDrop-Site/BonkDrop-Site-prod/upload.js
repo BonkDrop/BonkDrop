@@ -423,6 +423,7 @@ async function uploadFiles(files, onProgress) {
 
         const attempt = await postFileToEndpoint(endpoint, files, onProgress);
         const error = attempt.body?.error;
+        const isLastEndpoint = index === API_URLS.length - 1;
 
         if (attempt.body?.success) {
             return attempt.body;
