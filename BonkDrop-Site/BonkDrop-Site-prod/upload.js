@@ -242,6 +242,58 @@ async function checkEndpointHealth(endpoint, timeoutMs = 3000) {
     }
 }
 
+function getErrorDiagnosis(errorMessage) {
+    const msg = String(errorMessage || "").toUpperCase();
+    if (msg === "NETWORK_ERROR") {
+        return {
+            shortMessage: "réseau",
+            detailedMessage: "Impossible de joindre l'endpoint d'upload (NETWORK_ERROR). Vérifiez le proxy, l'URL d'upload et les en-têtes CORS."
+        };
+    }
+    if (msg === "UPLOAD_PROXY_ERROR") {
+        return {
+            shortMessage: "proxy",
+            detailedMessage: "Erreur lors du proxy vers l'API d'upload. Vérifiez le service en amont."
+        };
+    }
+    if (msg === "HTTP_413") {
+        return {
+            shortMessage: "fichier volumineux",
+            detailedMessage: "Le fichier est trop volumineux pour le serveur actuel (limite nginx/proxy)."
+        };
+    }
+    if (msg === "UPLOAD_TIMEOUT") {
+        return {
+            shortMessage: "timeout",
+            detailedMessage: "Le serveur met trop de temps à répondre. Réessayez dans quelques instants."
+        };
+    }
+    if (msg === "UNAUTHORIZED" || msg === "HTTP_401") {
+        return {
+            shortMessage: "authentification",
+            detailedMessage: "Unauthorized: clé API invalide ou manquante sur le serveur d'upload."
+        };
+    }
+    if (msg === "MISSING_SERVER_API_KEY") {
+        return {
+            shortMessage: "serveur",
+            detailedMessage: "Config serveur invalide : manque clé API upload."
+        };
+    }
+    if (msg.startsWith("HTTP_")) {
+        const code = msg.split("_")[1];
+        const isClientError = code >= 400 && code < 500;
+        return {
+            shortMessage: isClientError ? "client" : "serveur",
+            detailedMessage: `Erreur HTTP ${code} lors de l'upload.`
+        };
+    }
+    return {
+        shortMessage: "inconnu",
+        detailedMessage: `Erreur d'upload: ${errorMessage || "UPLOAD_FAILED"}`
+    };
+}
+
 function escapeHtml(value) {
     return String(value)
         .replaceAll("&", "&amp;")
@@ -563,23 +615,11 @@ async function send() {
             throw new Error(result.error || `HTTP_${result.status || 0}`);
         }
     } catch (e) {
-        let message = e.message || "UPLOAD_FAILED";
+        const errorMsg = e.message || "UPLOAD_FAILED";
+        const diagnosis = getErrorDiagnosis(errorMsg);
 
-        if (message === "UPLOAD_TIMEOUT") {
-            message = "Le serveur met trop de temps a repondre. Reessayez dans quelques instants.";
-        } else if (message === "HTTP_413") {
-            message = "Le fichier est trop volumineux pour le serveur actuel (limite nginx/proxy).";
-        } else if (message === "MISSING_SERVER_API_KEY") {
-            message = "Config serveur invalide : manque clé api upload";
-        } else if (message === "UNAUTHORIZED" || message === "HTTP_401") {
-            message = "Unauthorized: cle API invalide ou manquante sur le serveur d'upload.";
-        } else if (message === "NETWORK_ERROR") {
-            message = "Impossible de joindre l'endpoint d'upload (NETWORK_ERROR). Vérifiez le proxy, l'URL d'upload et les en-têtes CORS.";
-        } else if (message === "UPLOAD_PROXY_ERROR") {
-            message = "Erreur lors du proxy vers l'API d'upload. Vérifiez le service en amont.";
-        }
-
-        setStatus("Erreur upload: " + message, "error");
+        setStatus("Erreur upload: " + diagnosis.shortMessage, "error");
+        console.error("[BonkDrop Upload]", diagnosis.detailedMessage);
     } finally {
         if (fallbackProgressTimer) {
             clearInterval(fallbackProgressTimer);
