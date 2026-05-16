@@ -260,13 +260,13 @@ function getErrorDiagnosis(errorMessage) {
     if (msg === "UPLOAD_PROXY_ERROR") {
         return {
             shortMessage: "Erreur de proxy",
-            detailedMessage: "Erreur lors du proxy vers l'API d'upload. Check le service en cours sur le serv local (we wa askip ca marche en local alors hamdoula)."
+            detailedMessage: "Erreur lors du proxy vers l'API d'upload. Check le service en cours sur le serv local (we we askip ca marche en local alors hamdoula)"
         };
     }
     if (msg === "HTTP_413") {
         return {
             shortMessage: "Erreur : fichier trop volumineux",
-            detailedMessage: "Le fichier est trop volumineux pour le serveur actuel faites des dons pour que je puisse m'acheter une bonne machine pls les tuff bois 🥹❤️‍🩹" "
+            detailedMessage: "Le fichier est trop volumineux pour le serveur actuel faites des dons pour que je puisse m'acheter une bonne machine pls les tuff bois 🥹❤️‍🩹"
         };
     }
     if (msg === "UPLOAD_TIMEOUT") {
