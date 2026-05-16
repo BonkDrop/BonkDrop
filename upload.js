@@ -254,37 +254,37 @@ function getErrorDiagnosis(errorMessage) {
     if (msg === "NETWORK_ERROR") {
         return {
             shortMessage: "Erreur réseau",
-            detailedMessage: "Impossible de joindre l'endpoint d'upload (NETWORK_ERROR). Vérifiez le proxy, l'URL d'upload et les en-têtes CORS."
+            detailedMessage: "L'endpoint dupload m'a puni apparament faut que je teste l'endpoint et les cors en en tetes car il me refuse l'acces si t la tu captes un truc ALORS VIEN M'AIDER C LA RUE JE GALERE 😭😭😭💔"
         };
     }
     if (msg === "UPLOAD_PROXY_ERROR") {
         return {
             shortMessage: "Erreur de proxy",
-            detailedMessage: "Erreur lors du proxy vers l'API d'upload. Vérifiez le service en amont."
+            detailedMessage: "Erreur lors du proxy vers l'API d'upload. Check le service en cours sur le serv local (we wa askip ca marche en local alors hamdoula)."
         };
     }
     if (msg === "HTTP_413") {
         return {
             shortMessage: "Erreur : fichier trop volumineux",
-            detailedMessage: "Le fichier est trop volumineux pour le serveur actuel (limite nginx/proxy)."
+            detailedMessage: "Le fichier est trop volumineux pour le serveur actuel faites des dons pour que je puisse m'acheter une bonne machine pls les tuff bois 🥹❤️‍🩹" "
         };
     }
     if (msg === "UPLOAD_TIMEOUT") {
         return {
             shortMessage: "Erreur : timeout",
-            detailedMessage: "Le serveur met trop de temps à répondre. Réessayez dans quelques instants."
+            detailedMessage: "Le serveur met trop de temps à répondre. Imagine chui ddos la loose quoi ✌️🥹❤️‍🩹"
         };
     }
     if (msg === "UNAUTHORIZED" || msg === "HTTP_401") {
         return {
             shortMessage: "Erreur : authentification",
-            detailedMessage: "Unauthorized: clé API invalide ou manquante sur le serveur d'upload."
+            detailedMessage: "Unauthorized: T juste pas authorisé sale tahan frahan ta cru tallais frauder ma sécu comme as sale fou ok tu peux me voler mes servs mais fait un effort bro chui pas un neuille a ce point 🫩"
         };
     }
     if (msg === "MISSING_SERVER_API_KEY") {
         return {
             shortMessage: "Erreur serveur",
-            detailedMessage: "Config serveur invalide : manque clé API upload. Si vous êtes ici et que vous voyez que le probleme ne se résoud pas dans les prochaines heures, contactez le support de BonkDrop sur Discord ou via ElementInternals. Merci :)"
+            detailedMessage: "Config serveur invalide : manque la clé api gros neuille si t'as oublié de la mettre jte conseille d'arreter la dev 😁 oe chui francais pk"
         };
     }
     if (msg.startsWith("HTTP_")) {
