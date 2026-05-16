@@ -226,6 +226,13 @@ function parseResponseBody(responseText, status, endpoint) {
 
 async function checkEndpointHealth(endpoint, timeoutMs = 3000) {
     try {
+        // Si l'URL est externe (commence par http:// ou https://), skip le health-check
+        // pour éviter les erreurs CORS sur l'API publique. On ira directement au POST.
+        if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
+            return true;
+        }
+
+        // Pour les URLs locales/relatives, faire le health-check
         const base = new URL(endpoint, window.location.origin);
         const healthUrl = new URL('/health', base.origin).toString();
 
