@@ -398,7 +398,7 @@ async function getFilesFromDirectoryHandle(directoryHandle, currentPath = "") {
 async function postFileToEndpoint(endpoint, files, onProgress) {
     const formData = new FormData();
     for (const file of files) {
-        formData.append("files", file);
+        formData.append("file", file);
     }
 
     return await new Promise((resolve) => {
