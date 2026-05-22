@@ -1,4 +1,4 @@
-const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/api/upload"];
+const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/upload"];
 const UPLOAD_TIMEOUT_MS = 45000;
 const MAX_TOTAL_SIZE = 2 * 1024 * 1024 * 1024;
 const MAX_FILES_COUNT = 1000;
@@ -608,7 +608,7 @@ async function send() {
         });
         console.log(result);
 
-        if (result.success) {
+        if (result.url) {
             setAllFilesProgress(100);
             renderSuccessResult(result.files);
 
