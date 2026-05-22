@@ -1,4 +1,4 @@
-const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/upload"];
+const API_URLS = ["/api/upload", "https://api.bonkdrop.fr/api/upload"];
 const UPLOAD_TIMEOUT_MS = 45000;
 const MAX_TOTAL_SIZE = 2 * 1024 * 1024 * 1024;
 const MAX_FILES_COUNT = 1000;
