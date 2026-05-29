@@ -610,7 +610,10 @@ async function send() {
 
         if (result.url) {
             setAllFilesProgress(100);
-            renderSuccessResult(result.files);
+            console.log(result);
+                renderSuccessResult(
+                result.files || [result]
+            );
 
             await new Promise((resolve) => setTimeout(resolve, 350));
 
