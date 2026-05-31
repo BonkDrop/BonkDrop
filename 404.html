@@ -1,28 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Redirection...</title>
-</head>
-<body>
+<script>
+const path = window.location.pathname;
 
-  <p id="status">Recherche du lien...</p>
+const match = path.match(/^\/([a-f0-9]+)\/([a-f0-9]+)$/i);
 
-  <script>
-    const path = window.location.pathname;
-    const parts = path.split("/f/");
+if (match) {
+    const uploadId = match[1];
+    const token = match[2];
 
-    if (parts.length > 1) {
-      const id = parts[1].split("?")[0].trim();
-      if (!id) {
-        window.location.replace("/BonkDrop/liencasse.html");
-      } else {
-        window.location.replace(`/BonkDrop/download.html?id=${encodeURIComponent(id)}`);
-      }
-    } else {
-      window.location.replace("/BonkDrop/liencasse.html");
-    }
-  </script>
-
-</body>
-</html>
+    window.location.replace(
+        `/download.html?id=${encodeURIComponent(uploadId)}&token=${encodeURIComponent(token)}`
+    );
+} else {
+    window.location.replace("/liencasse.html");
+}
+</script>
