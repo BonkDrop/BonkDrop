@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="background-rotator.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="notfound.css">
+  <link rel="icon" href="favicon.ico" type="image/png">
+  <title>BonkDrop - Fichier introuvable</title>
+</head>
+<body class="site-page notfound-page">
+
+  <div class="site-background" aria-hidden="true">
+    <div class="site-background-layer is-visible"></div>
+    <div class="site-background-layer"></div>
+  </div>
+
+  <div class="overlay">
+    <div class="page-shell">
+      <main class="content notfound-content">
+        <header class="notfound-header">
+          <p class="notfound-kicker">Erreur 404</p>
+          <div class="brand-title-row">
+            <a class="brand-inline-logo" href="index.html" aria-label="Accueil BonkDrop">
+              <img src="logo_bonkdrop.png" alt="Logo BonkDrop">
+            </a>
+            <h1 class="title">BonkDrop</h1>
+          </div>
+          <p class="subtitle">Oups, votre fichier n'est pas trouvé :'<</p>
+          <p class="small-note">Désolé pour ce désagrément. Si aucune des explications suivantes n'est plausible, <a href=https://bonkdrop.fr/cgu.html#contact>contactez moi</a>et je me ferai un plaisir de vous aider ! :) </p>
+        </header>
+
+        <section class="notfound-panel" aria-live="polite">
+          <p class="notfound-panel-title">Ce qui a pu se passer</p>
+          <ul class="notfound-list">
+            <li>Le fichier a été supprimé par son propriétaire.</li>
+            <li>Le lien a expiré ou a été mal recopié.</li>
+            <li>Le contenu a été retiré car il ne respectait pas les CGU.</li>
+			<li>Le fichier est innacessible car le site est en maintenance.</li>
+          </ul>
+        </section>
+
+        <div class="notfound-actions">
+          <a class="btn btn-primary page-action" href="index.html">Retour à l'accueil</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+</body>
+</html>
