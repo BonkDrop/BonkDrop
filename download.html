@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="background-rotator.js" defer></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pages.css">
   <link rel="icon" href="favicon.ico" type="image/png">
-  <title>BonkDrop 🔨 - télechargement</title>
+  <title>BonkDrop - Téléchargement</title>
 </head>
-<body class="site-page simple-page">
+<body class="site-page simple-page download-page">
 
   <div class="site-background" aria-hidden="true">
     <div class="site-background-layer is-visible"></div>
@@ -18,18 +21,27 @@
 
   <div class="overlay">
     <div class="page-shell">
-      <main class="content simple-content">
-        <p class="simple-kicker">Télechargement</p>
-        <div class="brand-title-row">
-          <a class="brand-inline-logo" href="index.html" aria-label="Accueil BonkDrop">
-            <img src="logo_bonkdrop.png" alt="Logo BonkDrop">
-          </a>
-          <h1 class="title">BonkDrop 🔨</h1>
-        </div>
-        <p class="subtitle">Récuperation de votre fichier en cours.</p>
-        <p id="status" class="status-line">Chargement...</p>
-        <a id="downloadBtn" class="btn btn-primary page-action" hidden>Télecharger</a>
-        <a class="secondary-link" href="/BonkDrop/">Retour à l'accueil</a>
+      <main class="content simple-content download-content">
+        <header class="download-header">
+          <p class="simple-kicker">Téléchargement</p>
+          <div class="brand-title-row">
+            <a class="brand-inline-logo" href="index.html" aria-label="Accueil BonkDrop">
+              <img src="logo_bonkdrop.png" alt="Logo BonkDrop">
+            </a>
+            <h1 class="title">BonkDrop</h1>
+          </div>
+          <p class="subtitle">Votre fichier est prêt. Lancez le téléchargement ci-dessous pour le récupérer.</p>
+          <p class="small-note">Le lien ouvre directement le fichier depuis l'infrastructure BonkDrop.</p>
+        </header>
+
+        <section class="download-panel" aria-live="polite">
+          <p class="download-panel-label">État du lien</p>
+          <p id="status" class="status-line">Chargement...</p>
+          <p class="download-panel-note">Si le lien est invalide, vous serez redirigé vers une page d'erreur.</p>
+          <a id="downloadBtn" class="btn btn-primary page-action" hidden>Télécharger le fichier</a>
+        </section>
+
+        <a class="secondary-link" href="index.html">Retour à l'accueil</a>
       </main>
     </div>
   </div>
@@ -43,13 +55,13 @@
   if (id) {
     const safeId = encodeURIComponent(id);
     const fileUrl = `https://api.bonkdrop.fr/file/${safeId}`;
-    status.textContent = "Fichier pret";
+    status.textContent = "Fichier prêt à télécharger";
     btn.href = fileUrl;
     btn.setAttribute("download", "");
     btn.target = "_blank";
     btn.hidden = false;
   } else {
-    window.location.replace("/BonkDrop/liencasse.html");
+    window.location.replace("liencasse.html");
   }
 </script>
 
