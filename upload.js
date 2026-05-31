@@ -608,7 +608,7 @@ async function send() {
         });
         console.log(result);
 
-        if (result.success && result.files?.length > 0) {
+        if (result.success) {
             setAllFilesProgress(100);
             console.log(result);
                 renderSuccessResult(
