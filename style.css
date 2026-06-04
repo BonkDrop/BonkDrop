@@ -24,7 +24,7 @@
 }
 
 body {
-    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
     min-height: 100vh;
     color: var(--text);
     background: var(--bg);
@@ -415,7 +415,7 @@ body {
     border-radius: 9px;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.08s ease;
-    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    font-family: inherit;
     text-decoration: none;
 }
 

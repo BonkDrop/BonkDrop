@@ -15,7 +15,7 @@
 }
 
 body {
-	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
 	min-height: 100vh;
 	color: var(--text);
 	background: #101014;
@@ -97,7 +97,7 @@ body {
 	border-radius: 4px;
 	cursor: pointer;
 	transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.06s ease;
-	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-family: inherit;
 }
 
 .btn-primary {
