@@ -31,7 +31,7 @@
             <h1 class="title">BonkDrop</h1>
           </div>
           <p class="subtitle">Votre fichier est prêt. Lancez le téléchargement ci-dessous pour le récupérer.</p>
-          <p class="small-note">Le lien ouvre directement le fichier depuis l'infrastructure BonkDrop.</p>
+          <p class="small-note">Le bouton lance directement le téléchargement.</p>
         </header>
 
         <section class="download-panel" aria-live="polite">
@@ -55,7 +55,7 @@
   if (id) {
     const safeId = encodeURIComponent(id);
     const fileUrl = `https://api.bonkdrop.fr/file/${safeId}`;
-    status.textContent = "Fichier prêt à télécharger";
+    status.textContent = "Fichier en attente de récupération";
     btn.href = fileUrl;
     btn.setAttribute("download", "");
     btn.target = "_blank";
