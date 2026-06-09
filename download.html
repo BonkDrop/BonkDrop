@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
   <script src="background-rotator.js" defer></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pages.css">
   <link rel="icon" href="favicon.ico" type="image/png">
   <title>BonkDrop - Téléchargement</title>
 </head>
+
 <body class="site-page simple-page download-page">
 
   <div class="site-background" aria-hidden="true">
@@ -46,24 +50,8 @@
     </div>
   </div>
 
-  <script>
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-  const status = document.getElementById("status");
-  const btn = document.getElementById("downloadBtn");
-
-  if (id) {
-    const safeId = encodeURIComponent(id);
-    const fileUrl = `https://api.bonkdrop.fr/file/${safeId}`;
-    status.textContent = "Fichier en attente de récupération";
-    btn.href = fileUrl;
-    btn.setAttribute("download", "");
-    btn.target = "_blank";
-    btn.hidden = false;
-  } else {
-    window.location.replace("notfound.html");
-  }
-</script>
+  <script src="download.js" defer></script>
 
 </body>
+
 </html>
