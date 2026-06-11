@@ -1,11 +1,11 @@
 const backgroundImages = [
-    "wallpaper/343199-landscape-nature-sea-beach-2969367691.jpg",
-    "wallpaper/Beautiful_Landscape_Mountain-4235387320.jpg",
-    "wallpaper/les-fleurs-en-islande-3359334573.jpg",
-    "wallpaper/Beautiful-nature-landscape-mountains-trees-lake-clear-water-reflection_2560x1440-669162837.jpg",
-    "wallpaper/nature-landscape-beach-sea-wallpaper-2582425400.jpg",
-    "wallpaper/Cascade_-15-617280561.jpg",
-    "wallpaper/shutterstock_1822583969-1330489960.jpg",
+    "/imgs/wallpaper/343199-landscape-nature-sea-beach-2969367691.jpg",
+    "/imgs/wallpaper/Beautiful_Landscape_Mountain-4235387320.jpg",
+    "/imgs/wallpaper/les-fleurs-en-islande-3359334573.jpg",
+    "/imgs/wallpaper/Beautiful-nature-landscape-mountains-trees-lake-clear-water-reflection_2560x1440-669162837.jpg",
+    "/imgs/wallpaper/nature-landscape-beach-sea-wallpaper-2582425400.jpg",
+    "/imgs/wallpaper/Cascade_-15-617280561.jpg",
+    "/imgs/wallpaper/shutterstock_1822583969-1330489960.jpg",
 ];
 
 const backgroundLayers = document.querySelectorAll(".site-background-layer");
