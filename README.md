@@ -12,7 +12,7 @@ Un site web permettant d'envoyer des images, des documents, des vidéos et tout 
 - `BONKDROP_UPLOAD_TIMEOUT_MS` = timeout du proxy vers l'API interne (par defaut `45000`)
 
 2. Lancer le serveur proxy:
-
+Veuiller utiliser la commande suivante pour lancer le serveur proxy
 ```bash
 npm start
 ```
