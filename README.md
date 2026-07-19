@@ -1,4 +1,3 @@
-# BonkDrop
-Un site web permettant d'envoyer des images, des documents, des vidéos et tout autre type de fichiers sans devoir cliquer sur un lien. Fonctionne avec les e-mails, Discord, WhatsApp et autres types de messageries instantanées. Aucune inscription ou abonnement n'est requis pour son utilisation. BonkDrop n'est pas encore en beta, tout peut être sujet à changement.
+# BonkDrop  
 
-la doc c pr + tard
+Un site web qui permet d'envoyer des images, des documents, des vidéos et tous autres types de fichiers qui sont déjà inclus dans la discussion sans devoir cliquer sur un lien. Fonctionne avec les e-mails, Discord, WhatsApp et tous autres types de messageries instantanées. Aucune inscription n'est requise et c'est 100 % gratuit :)
